@@ -1,7 +1,7 @@
 // let assert = require('chai').assert;
 // let async = require('async');
 
-// import { ConfigParams } from 'pip-services3-commons-node';
+// import { ConfigParams } from 'package:pip_services3_commons-node';
 
 // import { Dummy } from '../Dummy';
 // import { DummyController } from '../DummyController';

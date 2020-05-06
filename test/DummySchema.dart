@@ -1,5 +1,5 @@
-// import { TypeCode } from 'pip-services3-commons-node';
-// import { ObjectSchema } from 'pip-services3-commons-node';
+// import { TypeCode } from 'package:pip_services3_commons-node';
+// import { ObjectSchema } from 'package:pip_services3_commons-node';
 
 // export class DummySchema extends ObjectSchema {
 

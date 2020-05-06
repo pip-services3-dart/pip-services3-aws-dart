@@ -1,15 +1,15 @@
 // let _ = require('lodash');
 
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams} from 'pip-services3-commons-node';
-// import { IReferences } from 'pip-services3-commons-node';
-// import { ObjectSchema } from 'pip-services3-commons-node';
-// import { Schema} from 'pip-services3-commons-node';
-// import { MapSchema } from 'pip-services3-commons-node';
-// import { TypeCode } from 'pip-services3-commons-node';
-// import { FilterParamsSchema } from 'pip-services3-commons-node';
-// import { PagingParamsSchema } from 'pip-services3-commons-node';
+// import { Descriptor } from 'package:pip_services3_commons-node';
+// import { FilterParams } from 'package:pip_services3_commons-node';
+// import { PagingParams} from 'package:pip_services3_commons-node';
+// import { IReferences } from 'package:pip_services3_commons-node';
+// import { ObjectSchema } from 'package:pip_services3_commons-node';
+// import { Schema} from 'package:pip_services3_commons-node';
+// import { MapSchema } from 'package:pip_services3_commons-node';
+// import { TypeCode } from 'package:pip_services3_commons-node';
+// import { FilterParamsSchema } from 'package:pip_services3_commons-node';
+// import { PagingParamsSchema } from 'package:pip_services3_commons-node';
 
 // import { LambdaFunction } from '../../src/container/LambdaFunction';
 // import { IDummyController } from '../IDummyController';

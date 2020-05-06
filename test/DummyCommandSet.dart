@@ -1,15 +1,15 @@
-// import { CommandSet } from 'pip-services3-commons-node';
-// import { ICommand } from 'pip-services3-commons-node';
-// import { Command } from 'pip-services3-commons-node';
-// import { Parameters } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { ObjectSchema } from 'pip-services3-commons-node';
-// import { Schema} from 'pip-services3-commons-node';
-// import { MapSchema } from 'pip-services3-commons-node';
-// import { TypeCode } from 'pip-services3-commons-node';
-// import { FilterParamsSchema } from 'pip-services3-commons-node';
-// import { PagingParamsSchema } from 'pip-services3-commons-node';
+// import { CommandSet } from 'package:pip_services3_commons-node';
+// import { ICommand } from 'package:pip_services3_commons-node';
+// import { Command } from 'package:pip_services3_commons-node';
+// import { Parameters } from 'package:pip_services3_commons-node';
+// import { FilterParams } from 'package:pip_services3_commons-node';
+// import { PagingParams } from 'package:pip_services3_commons-node';
+// import { ObjectSchema } from 'package:pip_services3_commons-node';
+// import { Schema} from 'package:pip_services3_commons-node';
+// import { MapSchema } from 'package:pip_services3_commons-node';
+// import { TypeCode } from 'package:pip_services3_commons-node';
+// import { FilterParamsSchema } from 'package:pip_services3_commons-node';
+// import { PagingParamsSchema } from 'package:pip_services3_commons-node';
 
 // import { Dummy } from './Dummy';
 // import { IDummyController } from './IDummyController';
@@ -36,7 +36,7 @@
 // 			new ObjectSchema(true)
 //                 .withOptionalProperty("filter", new FilterParamsSchema())
 //                 .withOptionalProperty("paging", new PagingParamsSchema()),
-// 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
 // 				let filter = FilterParams.fromValue(args.get("filter"));
 // 				let paging = PagingParams.fromValue(args.get("paging"));
 // 				this._controller.getPageByFilter(correlationId, filter, paging, callback);
@@ -49,7 +49,7 @@
 // 			"get_dummy_by_id",
 //             new ObjectSchema(true)
 //                 .withRequiredProperty("dummy_id", TypeCode.String),
-// 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
 // 				let id = args.getAsString("dummy_id");
 // 				this._controller.getOneById(correlationId, id, callback);
 // 			}
@@ -61,7 +61,7 @@
 // 			"create_dummy",
 //             new ObjectSchema(true)
 //                 .withRequiredProperty("dummy", new DummySchema()),
-// 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
 // 				let entity: Dummy = args.get("dummy");
 // 				this._controller.create(correlationId, entity, callback);
 // 			}
@@ -73,7 +73,7 @@
 // 			"update_dummy",
 //             new ObjectSchema(true)
 //                 .withRequiredProperty("dummy", new DummySchema()),
-// 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
 // 				let entity: Dummy = args.get("dummy");
 // 				this._controller.update(correlationId, entity, callback);
 // 			}
@@ -85,7 +85,7 @@
 // 			"delete_dummy",
 //             new ObjectSchema(true)
 //                 .withRequiredProperty("dummy_id", TypeCode.String),
-// 			(correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
+// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
 // 				let id = args.getAsString("dummy_id");
 // 				this._controller.deleteById(correlationId, id, callback);
 // 			}

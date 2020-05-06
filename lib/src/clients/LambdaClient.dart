@@ -1,302 +1,268 @@
-//  @module clients 
-//  @hidden 
-// let _ = require('lodash');
-//  @hidden 
-// let async = require('async');
+import 'dart:async';
+import 'dart:html';
+import 'dart:convert';
 
-// import { IOpenable } from 'pip-services3-commons-node';
-// import { IConfigurable } from 'pip-services3-commons-node';
-// import { IReferenceable } from 'pip-services3-commons-node';
-// import { IReferences } from 'pip-services3-commons-node';
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { IdGenerator } from 'pip-services3-commons-node';
-// import { UnknownException } from 'pip-services3-commons-node';
-// import { InvocationException } from 'pip-services3-commons-node';
-// import { DependencyResolver } from 'pip-services3-commons-node';
-// import { CompositeLogger } from 'pip-services3-components-node';
-// import { CompositeCounters } from 'pip-services3-components-node';
-// import { Timing } from 'pip-services3-components-node';
+import 'package:http_client/console.dart';
+import 'package:aws_client/aws_client.dart';
+import 'package:aws_client/lambda.dart';
+import 'package:aws_client/src/credentials.dart';
 
-// import { AwsConnectionParams } from '../connect/AwsConnectionParams';
-// import { AwsConnectionResolver } from '../connect/AwsConnectionResolver';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import 'package:pip_services3_components/pip_services3_components.dart';
 
-// 
-// /// Abstract client that calls AWS Lambda Functions.
-// /// 
-// /// When making calls "cmd" parameter determines which what action shall be called, while
-// /// other parameters are passed to the action itself.
-// /// 
-// /// ### Configuration parameters ###
-// /// 
-// /// - connections:                   
-// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
-// ///     - region:                      (optional) AWS region
-// /// - credentials:    
-// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
-// ///     - access_id:                   AWS access/client id
-// ///     - access_key:                  AWS access/client id
-// /// - options:
-// ///     - connect_timeout:             (optional) connection timeout in milliseconds (default: 10 sec)
-// ///  
-// /// ### References ###
-// /// 
-// /// - <code>\*:logger:\*:\*:1.0</code>            (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - <code>\*:counters:\*:\*:1.0</code>          (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - <code>\*:discovery:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
-// /// - <code>\*:credential-store:\*:\*:1.0</code>  (optional) Credential stores to resolve credentials
-// /// 
-// /// See [[LambdaFunction]]
-// /// See [[CommandableLambdaClient]]
-// /// 
-// /// ### Example ###
-// /// 
-// ///     class MyLambdaClient extends LambdaClient implements IMyClient {
-// ///         ...
-// ///      
-// ///         public getData(correlationId: string, id: string, 
-// ///             callback: (err: any, result: MyData) => void): void {
-// ///             
-// ///             let timing = this.instrument(correlationId, 'myclient.get_data');
-// ///             this.call("get_data" correlationId, { id: id }, (err, result) => {
-// ///                 timing.endTiming();
-// ///                 callback(err, result);
-// ///             });        
-// ///         }
-// ///         ...
-// ///     }
-// /// 
-// ///     let client = new MyLambdaClient();
-// ///     client.configure(ConfigParams.fromTuples(
-// ///         "connection.region", "us-east-1",
-// ///         "connection.access_id", "XXXXXXXXXXX",
-// ///         "connection.access_key", "XXXXXXXXXXX",
-// ///         "connection.arn", "YYYYYYYYYYYYY"
-// ///     ));
-// ///     
-// ///     client.getData("123", "1", (err, result) => {
-// ///         ...
-// ///     });
-//  
-// export abstract class LambdaClient implements IOpenable, IConfigurable, IReferenceable {
-//     
-//     /// The reference to AWS Lambda Function.
-//      
-//     protected _lambda: any;
-//     
-//     /// The opened flag.
-//      
-//     protected _opened: boolean = false;
-//     
-//     /// The AWS connection parameters
-//      
-//     protected _connection: AwsConnectionParams;
-//     private _connectTimeout: number = 10000;
+import '../connect/AwsConnectionParams.dart';
+import '../connect/AwsConnectionResolver.dart';
 
-//     
-//     /// The dependencies resolver.
-//      
-//     protected _dependencyResolver: DependencyResolver = new DependencyResolver();
-//     
-//     /// The connection resolver.
-//      
-//     protected _connectionResolver: AwsConnectionResolver = new AwsConnectionResolver();
-//     
-//     /// The logger.
-//      
-//     protected _logger: CompositeLogger = new CompositeLogger();
-//     
-//     /// The performance counters.
-//      
-//     protected _counters: CompositeCounters = new CompositeCounters();
+/// Abstract client that calls AWS Lambda Functions.
+///
+/// When making calls 'cmd' parameter determines which what action shall be called, while
+/// other parameters are passed to the action itself.
+///
+/// ### Configuration parameters ###
+///
+/// - [connections]:
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - [region]:                      (optional) AWS region
+/// - [credentials]:
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [access_id]:                   AWS access/client id
+///     - [access_key]:                  AWS access/client id
+/// - [options]:
+///     - [connect_timeout]:             (optional) connection timeout in milliseconds (default: 10 sec)
+///
+/// ### References ###
+///
+/// - *:logger:\*:\*:1.0            (optional) [ILogger] components to pass log messages
+/// - *:counters:\*:\*:1.0          (optional) [ICounters] components to pass collected measurements
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connection
+/// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
+///
+/// See [LambdaFunction]
+/// See [CommandableLambdaClient]
+///
+/// ### Example ###
+///
+///     class MyLambdaClient extends LambdaClient implements IMyClient {
+///         ...
+///
+///         public getData(String correlationId, id: string,
+///             callback: (err: any, result: MyData) => void): void {
+///
+///             var timing = this.instrument(correlationId, 'myclient.get_data');
+///             this.call('get_data' correlationId, { id: id }, (err, result) => {
+///                 timing.endTiming();
+///                 callback(err, result);
+///             });
+///         }
+///         ...
+///     }
+///
+///     var client = new MyLambdaClient();
+///     client.configure(ConfigParams.fromTuples(
+///         'connection.region', 'us-east-1',
+///         'connection.access_id', 'XXXXXXXXXXX',
+///         'connection.access_key', 'XXXXXXXXXXX',
+///         'connection.arn', 'YYYYYYYYYYYYY'
+///     ));
+///
+///     client.getData('123', '1', (err, result) => {
+///         ...
+///     });
 
-//     
-//     /// Configures component by passing configuration parameters.
-//     /// 
-//     ///  -  config    configuration parameters to be set.
-//      
-//     public configure(config: ConfigParams): void {
-//         this._connectionResolver.configure(config);
-// 		this._dependencyResolver.configure(config);
+abstract class LambdaClient
+    implements IOpenable, IConfigurable, IReferenceable {
+  /// The reference to AWS Lambda Function.
+  Lambda lambda;
 
-//         this._connectTimeout = config.getAsIntegerWithDefault('options.connect_timeout', this._connectTimeout);
-//     }
+  Client _httpClient;
+  Aws _aws;
 
-//     
-// 	/// Sets references to dependent components.
-// 	/// 
-// 	///  -  references 	references to locate the component dependencies. 
-//      
-//     public setReferences(references: IReferences): void {
-//         this._logger.setReferences(references);
-//         this._counters.setReferences(references);
-//         this._connectionResolver.setReferences(references);
-//         this._dependencyResolver.setReferences(references);
-//     }
+  /// The opened flag.
+  bool opened = false;
 
-//     
-//     /// Adds instrumentation to log calls and measure call time.
-//     /// It returns a Timing object that is used to end the time measurement.
-//     /// 
-//     ///  -  correlationId     (optional) transaction id to trace execution through call chain.
-//     ///  -  name              a method name.
-//     /// Returns Timing object to end the time measurement.
-//      
-//     protected instrument(correlationId: string, name: string): Timing {
-//         this._logger.trace(correlationId, "Executing %s method", name);
-//         return this._counters.beginTiming(name + ".exec_time");
-//     }
+  /// The AWS connection parameters
+  AwsConnectionParams connection;
+  var _connectTimeout = 10000;
 
-//     
-// 	/// Checks if the component is opened.
-// 	/// 
-// 	/// Returns true if the component has been opened and false otherwise.
-//      
-//     public isOpen(): boolean {
-//         return this._opened;
-//     }
+  /// The dependencies resolver.
+  final dependencyResolver = DependencyResolver();
 
-//     
-// 	/// Opens the component.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-//      
-//     public open(correlationId: string, callback: (err?: any) => void): void {
-//         if (this.isOpen()) {
-//             if (callback) callback();
-//             return;
-//         }
+  /// The connection resolver.
+  final connectionResolver = AwsConnectionResolver();
 
-//         async.series([
-//             (callback) => {
-//                 this._connectionResolver.resolve(correlationId, (err, connection) => {
-//                     this._connection = connection;
-//                     callback(err);
-//                 });
-//             },
-//             (callback) => {
-//                 let aws = require('aws-sdk');
-                
-//                 aws.config.update({
-//                     accessKeyId: this._connection.getAccessId(),
-//                     secretAccessKey: this._connection.getAccessKey(),
-//                     region: this._connection.getRegion()
-//                 });
+  /// The logger.
+  final logger = CompositeLogger();
 
-//                 aws.config.httpOptions = {
-//                     timeout: this._connectTimeout
-//                 };
+  /// The performance counters.
+  final counters = CompositeCounters();
 
-//                 this._lambda = new aws.Lambda();
+  /// Configures component by passing configuration parameters.
+  ///
+  ///  -  [config]    configuration parameters to be set.
+  @override
+  void configure(ConfigParams config) {
+    connectionResolver.configure(config);
+    dependencyResolver.configure(config);
 
-//                 this._opened = true;
-//                 this._logger.debug(correlationId, "Lambda client connected to %s", this._connection.getArn());
+    _connectTimeout = config.getAsIntegerWithDefault(
+        'options.connect_timeout', _connectTimeout);
+  }
 
-//                 callback();
-//             }
-//         ], callback);
-//     }
+  /// Sets references to dependent components.
+  ///
+  ///  -  [references] 	references to locate the component dependencies.
+  @override
+  void setReferences(IReferences references) {
+    logger.setReferences(references);
+    counters.setReferences(references);
+    connectionResolver.setReferences(references);
+    dependencyResolver.setReferences(references);
+  }
 
-//     
-// 	/// Closes component and frees used resources.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-//      
-//     public close(correlationId: string, callback?: (err?: any) => void): void {
-//         // Todo: close listening?
-//         this._opened = false;
-//         if (callback) callback();
-//     }
+  /// Adds instrumentation to log calls and measure call time.
+  /// It returns a Timing object that is used to end the time measurement.
+  ///
+  ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
+  ///  -  [name]              a method name.
+  /// Returns Timing object to end the time measurement.
+  Timing instrument(String correlationId, String name) {
+    logger.trace(correlationId, 'Executing %s method', [name]);
+    return counters.beginTiming(name + '.exec_time');
+  }
 
-//     
-//     /// Performs AWS Lambda Function invocation.
-//     /// 
-//     ///  -  invocationType    an invocation type: "RequestResponse" or "Event"
-//     ///  -  cmd               an action name to be called.
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  args              action arguments
-//     ///  -  callback          callback function that receives action result or error.
-//      
-//     protected invoke(invocationType: string, cmd: string, correlationId: string, args: any,
-//         callback?: (err: any, result: any) => void): void {
+  /// Checks if the component is opened.
+  ///
+  /// Returns true if the component has been opened and false otherwise.
+  @override
+  bool isOpen() {
+    return opened;
+  }
 
-//         if (cmd == null) {
-//             let err = new UnknownException(null, 'NO_COMMAND', 'Missing Seneca pattern cmd');
-//             if (callback) callback(err, null);
-//             else this._logger.error(correlationId, err, 'Failed to call %s', cmd);
-//             return;
-//         }
+  /// Opens the component.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return 			Future that receives  null no errors occured.
+  /// Throws error
+  @override
+  Future open(String correlationId) async {
+    if (isOpen()) {
+      return;
+    }
 
-//         args = _.clone(args);
-//         args.cmd = cmd;
-//         args.correlation_id = correlationId || IdGenerator.nextShort();
+    var err = await Future.wait([
+      () async {
+        connection = await connectionResolver.resolve(correlationId);
+      }(),
+      () async {
+        //final Client httpClient = ConsoleClient(idleTimeout: Duration(milliseconds: _connectTimeout));
+        _httpClient = ConsoleClient();
+        final credentials = Credentials(
+            accessKey: connection.getAccessId(),
+            secretKey: connection.getAccessKey());
+        //
+        try {
+          _aws = Aws(credentials: credentials, httpClient: _httpClient);
+          lambda = _aws.lambda(connection.getRegion());
 
-//         let params = {
-//             FunctionName: this._connection.getArn(),
-//             InvocationType: invocationType,
-//             LogType: 'None',
-//             Payload: JSON.stringify(args)
-//         }                        
-                        
-//         this._lambda.invoke(params, (err, data) => {
-//             if (callback == null) {
-//                 if (err) this._logger.error(correlationId, err, 'Failed to invoke lambda function');
-//                 return;
-//             }
-            
-//             if (err) {
-//                 err = new InvocationException(
-//                     correlationId, 
-//                     'CALL_FAILED', 
-//                     'Failed to invoke lambda function'
-//                 ).withCause(err);
+          opened = true;
+          logger.debug(correlationId, 'Lambda client connected to %s',
+              [connection.getArn()]);
+        } catch (ex) {
+          logger.error(correlationId, ex, 'Error while open AWS client');
+          return ex;
+        } finally {
+          await _httpClient.close();
+        }
+      }()
+    ]);
 
-//                 if (callback) callback(err, null);
-//             } else {
-//                 let result: any = data.Payload;
-//                 if (_.isString(result)) {
-//                     try {
-//                         result = JSON.parse(result);
-//                     } catch (err) {
-//                         err = new InvocationException(
-//                             correlationId,
-//                             'DESERIALIZATION_FAILED',
-//                             'Failed to deserialize result'
-//                         ).withCause(err);
+    if (err.isNotEmpty) {
+      throw err[0];
+    }
+  }
 
-//                         callback(err, null);
-//                     }
-//                 }
-//                 callback(null, result);
-//             }
-//         });
-//     }    
+  /// Closes component and frees used resources.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return 			Future that receives error or null no errors occured.
+  @override
+  Future close(String correlationId) async {
+    if (_httpClient != null) {
+      await _httpClient.close();
+    }
+    opened = false;
+  }
 
-//     
-//     /// Calls a AWS Lambda Function action.
-//     /// 
-//     ///  -  cmd               an action name to be called.
-//     ///  -  correlationId     (optional) transaction id to trace execution through call chain.
-//     ///  -  params            (optional) action parameters.
-//     ///  -  callback          (optional) callback function that receives result object or error.
-//      
-//     protected call(cmd: string, correlationId: string, params: any = {},
-//         callback?: (err: any, result: any) => void): void {
-//         this.invoke('RequestResponse', cmd, correlationId, params, callback);
-//     }
+  /// Performs AWS Lambda Function invocation.
+  ///
+  ///  -  invocationType    an invocation type: 'RequestResponse' or 'Event'
+  ///  -  cmd               an action name to be called.
+  ///  -  correlationId 	(optional) transaction id to trace execution through call chain.
+  ///  -  args              action arguments
+  ///  Return          Future that receives action result
+  /// Throws error.
 
-//     
-//     /// Calls a AWS Lambda Function action asynchronously without waiting for response.
-//     /// 
-//     ///  -  cmd               an action name to be called.
-//     ///  -  correlationId     (optional) transaction id to trace execution through call chain.
-//     ///  -  params            (optional) action parameters.
-//     ///  -  callback          (optional) callback function that receives error or null for success.
-//      
-//     protected callOneWay(cmd: string, correlationId: string, params: any = {},
-//         callback?: (err: any) => void): void {
-//         this.invoke('Event', cmd, correlationId, params, callback);
-//     }
+  Future invoke(LambdaInvocationType invocationType, String cmd,
+      String correlationId, Map args) async {
+    if (cmd == null || cmd.isEmpty) {
+      var err = UnknownException(
+          correlationId, 'NO_COMMAND', 'Missing Seneca pattern cmd');
+      logger.error(correlationId, err, 'Failed to call %s', [cmd]);
+      throw err;
+    }
 
-// }
+    var cloneArgs = Map.from(args);
+    cloneArgs['cmd'] = cmd;
+    cloneArgs['correlation_id'] = correlationId ?? IdGenerator.nextShort();
+
+    var headers = {'X-Amz-Log-Type': 'None'};
+
+    try {
+      var data = await lambda.invoke(connection.getArn(), cloneArgs.toString(),
+          headers: headers, invocationType: invocationType);
+
+      var result = await data.readAsString(); //readAsBytes();
+
+      try {
+        result = json.decode(result);
+      } catch (err) {
+        throw InvocationException(correlationId, 'DESERIALIZATION_FAILED',
+                'Failed to deserialize result')
+            .withCause(err);
+      }
+
+      return result;
+    } catch (err) {
+      logger.error(correlationId, err, 'Failed to invoke lambda function');
+
+      throw InvocationException(
+              correlationId, 'CALL_FAILED', 'Failed to invoke lambda function')
+          .withCause(err);
+    }
+  }
+
+  /// Calls a AWS Lambda Function action.
+  ///
+  ///  -  [cmd]               an action name to be called.
+  ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
+  ///  -  [params]            (optional) action parameters.
+  ///  Returns               Future that receives result object
+  /// Throws error.
+
+  Future call(String cmd, String correlationId, params) {
+    return invoke(
+        LambdaInvocationType.RequestResponse, cmd, correlationId, params);
+  }
+
+  /// Calls a AWS Lambda Function action asynchronously without waiting for response.
+  ///
+  ///  -  [cmd]               an action name to be called.
+  ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
+  ///  -  [params]            (optional) action parameters.
+  ///  Returns                Future that receives null for success.
+  /// Throws error or
+
+  Future callOneWay(String cmd, String correlationId, params) async {
+    await invoke(LambdaInvocationType.Event, cmd, correlationId, params);
+  }
+}

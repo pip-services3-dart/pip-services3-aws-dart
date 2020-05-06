@@ -1,4 +1,4 @@
-// import { Descriptor } from 'pip-services3-commons-node';
+// import { Descriptor } from 'package:pip_services3_commons-node';
 // import { CommandableLambdaFunction } from '../../src/container/CommandableLambdaFunction';
 // import { DummyFactory } from '../DummyFactory';
 

@@ -4,16 +4,16 @@
 // 
 // /// Abstract client that calls commandable AWS Lambda Functions.
 // /// 
-// /// Commandable services are generated automatically for [[https://rawgit.com/pip-services-node/pip-services3-commons-node/master/doc/api/interfaces/commands.icommandable.html ICommandable objects]].
+// /// Commandable services are generated automatically for [[https://rawgit.com/pip-services-node/package:pip_services3_commons-node/master/doc/api/interfaces/commands.icommandable.html ICommandable objects]].
 // /// Each command is exposed as action determined by "cmd" parameter.
 // /// 
 // /// ### Configuration parameters ###
 // /// 
 // /// - connections:                   
-// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
 // ///     - region:                      (optional) AWS region
 // /// - credentials:    
-// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
+// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
 // ///     - access_id:                   AWS access/client id
 // ///     - access_key:                  AWS access/client id
 // /// - options:
@@ -21,10 +21,10 @@
 // ///  
 // /// ### References ###
 // /// 
-// /// - <code>\*:logger:\*:\*:1.0</code>            (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - <code>\*:counters:\*:\*:1.0</code>          (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - <code>\*:discovery:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
-// /// - <code>\*:credential-store:\*:\*:1.0</code>  (optional) Credential stores to resolve credentials
+// /// - *:logger:\*:\*:1.0            (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
+// /// - *:counters:\*:\*:1.0          (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
+// /// - *:discovery:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
+// /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 // /// 
 // /// See [[LambdaFunction]]
 // /// 
@@ -33,7 +33,7 @@
 // ///     class MyLambdaClient extends CommandableLambdaClient implements IMyClient {
 // ///         ...
 // ///      
-// ///         public getData(correlationId: string, id: string, 
+// ///         public getData(String correlationId, id: string, 
 // ///             callback: (err: any, result: MyData) => void): void {
 // ///             
 // ///             this.callCommand(
@@ -83,7 +83,7 @@
 //     ///  -  params            command parameters.
 //     ///  -  callback          callback function that receives result or error.
 //      
-//     public callCommand(cmd: string, correlationId: string, params: any,
+//     public callCommand(cmd: string, String correlationId, params: any,
 //         callback: (err: any, result: any) => void): void {
         
 //         let timing = this.instrument(correlationId, this._name + '.' + cmd);

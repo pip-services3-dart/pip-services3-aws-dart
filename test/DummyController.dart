@@ -1,10 +1,10 @@
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { DataPage } from 'pip-services3-commons-node';
-// import { IdGenerator } from 'pip-services3-commons-node';
-// import { ICommandable } from 'pip-services3-commons-node';
-// import { CommandSet } from 'pip-services3-commons-node';
+// import { Descriptor } from 'package:pip_services3_commons-node';
+// import { FilterParams } from 'package:pip_services3_commons-node';
+// import { PagingParams } from 'package:pip_services3_commons-node';
+// import { DataPage } from 'package:pip_services3_commons-node';
+// import { IdGenerator } from 'package:pip_services3_commons-node';
+// import { ICommandable } from 'package:pip_services3_commons-node';
+// import { CommandSet } from 'package:pip_services3_commons-node';
 
 // import { IDummyController } from './IDummyController';
 // import { DummyCommandSet } from './DummyCommandSet';
@@ -20,7 +20,7 @@
 // 		return this._commandSet;
 // 	}
 
-// 	public getPageByFilter(correlationId: string, filter: FilterParams, paging: PagingParams, 
+// 	public getPageByFilter(String correlationId, filter: FilterParams, paging: PagingParams, 
 // 		callback: (err: any, result: DataPage<Dummy>) => void): void {
 		
 // 		filter = filter != null ? filter : new FilterParams();
@@ -48,7 +48,7 @@
 // 		callback(null,  new DataPage<Dummy>(result));
 // 	}
 
-// 	public getOneById(correlationId: string, id: string, callback: (err: any, result: Dummy) => void): void {
+// 	public getOneById(String correlationId, id: string, callback: (err: any, result: Dummy) => void): void {
 // 		for (var i = 0; i < this._entities.length; i++) {
 //             let entity: Dummy = this._entities[i];
 // 			if (id == entity.id) {
@@ -59,7 +59,7 @@
 // 		callback(null, null);
 // 	}
 
-// 	public create(correlationId: string, entity: Dummy, callback: (err: any, result: Dummy) => void): void {
+// 	public create(String correlationId, entity: Dummy, callback: (err: any, result: Dummy) => void): void {
 // 		if (entity.id == null) {
 //             entity.id = IdGenerator.nextLong();
 //             this._entities.push(entity);
@@ -67,7 +67,7 @@
 // 		callback(null, entity);
 // 	}
 
-// 	public update(correlationId: string, newEntity: Dummy, callback: (err: any, result: Dummy) => void): void {
+// 	public update(String correlationId, newEntity: Dummy, callback: (err: any, result: Dummy) => void): void {
 // 		for(var index = 0; index < this._entities.length; index++) {
 // 			let entity: Dummy = this._entities[index];
 // 			if (entity.id == newEntity.id) {
@@ -79,7 +79,7 @@
 // 		callback(null, null);
 // 	}
 
-// 	public deleteById(correlationId: string, id: string, callback: (err: any, result: Dummy) => void): void {
+// 	public deleteById(String correlationId, id: string, callback: (err: any, result: Dummy) => void): void {
 // 		for (var index = 0; index < this._entities.length; index++) {
 // 			let entity: Dummy = this._entities[index];
 // 			if (entity.id == id) {

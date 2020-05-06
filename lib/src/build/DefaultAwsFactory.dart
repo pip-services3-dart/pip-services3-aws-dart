@@ -1,28 +1,27 @@
-//  @module build 
-// import { Factory } from 'pip-services3-components-node';
-// import { Descriptor } from 'pip-services3-commons-node';
+import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// import { CloudWatchLogger } from '../log/CloudWatchLogger';
-// import { CloudWatchCounters } from '../count/CloudWatchCounters';
+import '../log/CloudWatchLogger.dart';
+import '../count/CloudWatchCounters.dart';
 
-// 
-// /// Creates AWS components by their descriptors.
-// /// 
-// /// See [[CloudWatchLogger]]
-// /// See [[CloudWatchCounters]]
-//  
-// export class DefaultAwsFactory extends Factory {
-//     public static readonly Descriptor = new Descriptor("pip-services", "factory", "aws", "default", "1.0");
-    
-// 	public static readonly CloudWatchLoggerDescriptor = new Descriptor("pip-services", "logger", "cloudwatch", "*", "1.0");
-// 	public static readonly CloudWatchCountersDescriptor = new Descriptor("pip-services", "counters", "cloudwatch", "*", "1.0");
-    
-// 	
-// 	/// Create a new instance of the factory.
-// 	 
-// 	public constructor() {
-//         super();
-// 		this.registerAsType(DefaultAwsFactory.CloudWatchLoggerDescriptor, CloudWatchLogger);
-// 		this.registerAsType(DefaultAwsFactory.CloudWatchCountersDescriptor, CloudWatchCounters);
-// 	}
-// }
+/// Creates AWS components by their descriptors.
+///
+/// See [[CloudWatchLogger]]
+/// See [[CloudWatchCounters]]
+class DefaultAwsFactory extends Factory {
+  static final descriptor =
+      Descriptor('pip-services', 'factory', 'aws', 'default', '1.0');
+
+  static final CloudWatchLoggerDescriptor =
+      Descriptor('pip-services', 'logger', 'cloudwatch', '*', '1.0');
+  static final CloudWatchCountersDescriptor =
+      Descriptor('pip-services', 'counters', 'cloudwatch', '*', '1.0');
+
+  /// Create ainstance of the factory.
+  DefaultAwsFactory() : super() {
+    registerAsType(
+        DefaultAwsFactory.CloudWatchLoggerDescriptor, CloudWatchLogger);
+    registerAsType(
+        DefaultAwsFactory.CloudWatchCountersDescriptor, CloudWatchCounters);
+  }
+}

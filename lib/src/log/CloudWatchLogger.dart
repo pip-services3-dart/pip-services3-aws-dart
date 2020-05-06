@@ -2,19 +2,19 @@
 //  @hidden 
 // let async = require('async');
 
-// import { IReferenceable } from 'pip-services3-commons-node';
-// import { LogLevel } from 'pip-services3-components-node';
-// import { IReferences } from 'pip-services3-commons-node';
-// import { IOpenable } from 'pip-services3-commons-node';
-// import { CachedLogger } from 'pip-services3-components-node';
-// import { LogMessage } from 'pip-services3-components-node';
-// import { ConfigException } from 'pip-services3-commons-node';
-// import { ConfigParams } from 'pip-services3-commons-node';
+// import { IReferenceable } from 'package:pip_services3_commons-node';
+// import { LogLevel } from 'package:pip_services3_components-node';
+// import { IReferences } from 'package:pip_services3_commons-node';
+// import { IOpenable } from 'package:pip_services3_commons-node';
+// import { CachedLogger } from 'package:pip_services3_components-node';
+// import { LogMessage } from 'package:pip_services3_components-node';
+// import { ConfigException } from 'package:pip_services3_commons-node';
+// import { ConfigParams } from 'package:pip_services3_commons-node';
 // import { AwsConnectionResolver } from '../connect';
 // import { AwsConnectionParams } from '../connect';
-// import { CompositeLogger } from 'pip-services3-components-node';
-// import { ContextInfo } from 'pip-services3-components-node';
-// import { Descriptor } from 'pip-services3-commons-node'
+// import { CompositeLogger } from 'package:pip_services3_components-node';
+// import { ContextInfo } from 'package:pip_services3_components-node';
+// import { Descriptor } from 'package:pip_services3_commons-node'
 
 // 
 // /// Logger that writes log messages to AWS Cloud Watch Log.
@@ -24,10 +24,10 @@
 // /// - stream:                        (optional) Cloud Watch Log stream (default: context name)
 // /// - group:                         (optional) Cloud Watch Log group (default: context instance ID or hostname)
 // /// - connections:                   
-// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
 // ///     - region:                      (optional) AWS region
 // /// - credentials:    
-// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
+// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
 // ///     - access_id:                   AWS access/client id
 // ///     - access_key:                  AWS access/client id
 // /// - options:
@@ -36,13 +36,13 @@
 // /// 
 // /// ### References ###
 // /// 
-// /// - <code>\*:context-info:\*:\*:1.0</code>      (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/classes/info.contextinfo.html ContextInfo]] to detect the context id and specify counters source
-// /// - <code>\*:discovery:\*:\*:1.0</code>         (optional) [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connections
-// /// - <code>\*:credential-store:\*:\*:1.0</code>  (optional) Credential stores to resolve credentials
+// /// - *:context-info:\*:\*:1.0      (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/info.contextinfo.html ContextInfo]] to detect the context id and specify counters source
+// /// - *:discovery:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connections
+// /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 // /// 
-// /// See [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/classes/count.counter.html Counter]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/classes/count.cachedcounters.html CachedCounters]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/pip-services3-components-node/master/doc/api/classes/log.compositelogger.html CompositeLogger]] (in the Pip.Services components package)
+// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.counter.html Counter]] (in the Pip.Services components package)
+// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.cachedcounters.html CachedCounters]] (in the Pip.Services components package)
+// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/log.compositelogger.html CompositeLogger]] (in the Pip.Services components package)
 
 // /// 
 // /// ### Example ###
@@ -108,7 +108,7 @@
 // 	/// Sets references to dependent components.
 // 	/// 
 // 	///  -  references 	references to locate the component dependencies. 
-// 	/// See [[https://rawgit.com/pip-services-node/pip-services3-commons-node/master/doc/api/interfaces/refer.ireferences.html IReferences]] (in the Pip.Services commons package)
+// 	/// See [[https://rawgit.com/pip-services-node/package:pip_services3_commons-node/master/doc/api/interfaces/refer.ireferences.html IReferences]] (in the Pip.Services commons package)
 // 	 
 //     public setReferences(references: IReferences): void {
 //         super.setReferences(references);
@@ -131,7 +131,7 @@
 //     ///  -  error             an error object associated with this message.
 //     ///  -  message           a human-readable message to log.
 //      
-//     protected write(level: LogLevel, correlationId: string, ex: Error, message: string): void {
+//     protected write(level: LogLevel, String correlationId, ex: Error, message: string): void {
 //         if (this._level < level) {
 //             return;
 //         }
@@ -154,7 +154,7 @@
 // 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
 //     ///  -  callback 			callback function that receives error or null no errors occured.
 // 	 
-//     public open(correlationId: string, callback: (err: any) => void): void {
+//     public open(String correlationId, callback: (err: any) => void): void {
 //         if (this.isOpen()) {
 //             callback(null);
 //             return;
@@ -245,7 +245,7 @@
 // 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
 //     ///  -  callback 			callback function that receives error or null no errors occured.
 // 	 
-//     public close(correlationId: string, callback: (err: any) => void): void {
+//     public close(String correlationId, callback: (err: any) => void): void {
 //         this.save(this._cache, (err) => {
 //             if (this._timer)
 //                 clearInterval(this._timer);

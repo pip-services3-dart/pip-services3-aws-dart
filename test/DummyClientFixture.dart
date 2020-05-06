@@ -1,8 +1,8 @@
 // let assert = require('chai').assert;
 // let async = require('async');
 
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
+// import { FilterParams } from 'package:pip_services3_commons-node';
+// import { PagingParams } from 'package:pip_services3_commons-node';
 
 // import { Dummy } from './Dummy';
 // import { IDummyClient } from './IDummyClient';

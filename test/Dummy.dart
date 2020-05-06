@@ -1,4 +1,4 @@
-// import { IStringIdentifiable } from 'pip-services3-commons-node';
+// import { IStringIdentifiable } from 'package:pip_services3_commons-node';
 
 // export class Dummy implements IStringIdentifiable {
 // 	public constructor(id: string, key: string, content: string) {

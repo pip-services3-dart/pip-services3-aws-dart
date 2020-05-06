@@ -1,6 +1,6 @@
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
-// import { DataPage } from 'pip-services3-commons-node';
+// import { FilterParams } from 'package:pip_services3_commons-node';
+// import { PagingParams } from 'package:pip_services3_commons-node';
+// import { DataPage } from 'package:pip_services3_commons-node';
 
 // import { CommandableLambdaClient } from '../../src/clients/CommandableLambdaClient';
 // import { IDummyClient } from '../IDummyClient';
@@ -12,7 +12,7 @@
 //         super("dummy");
 //     }
 
-//     public getDummies(correlationId: string, filter: FilterParams, paging: PagingParams,
+//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams,
 //         callback: (err: any, result: DataPage<Dummy>) => void): void {
 //         this.call(
 //             'get_dummies',
@@ -27,7 +27,7 @@
 //         );
 //     }
 
-//     public getDummyById(correlationId: string, dummyId: string,
+//     public getDummyById(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call(
 //             'get_dummy_by_id',
@@ -41,7 +41,7 @@
 //         );
 //     }
 
-//     public createDummy(correlationId: string, dummy: any,
+//     public createDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call(
 //             'create_dummy',
@@ -55,7 +55,7 @@
 //         );
 //     }
 
-//     public updateDummy(correlationId: string, dummy: any,
+//     public updateDummy(String correlationId, dummy: any,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call(
 //             'update_dummy',
@@ -69,7 +69,7 @@
 //         );
 //     }
 
-//     public deleteDummy(correlationId: string, dummyId: string,
+//     public deleteDummy(String correlationId, dummyId: string,
 //         callback: (err: any, result: Dummy) => void): void {
 //         this.call(
 //             'delete_dummy',

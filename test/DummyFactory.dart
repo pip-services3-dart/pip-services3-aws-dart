@@ -1,5 +1,5 @@
-// import { Factory } from 'pip-services3-components-node';
-// import { Descriptor } from 'pip-services3-commons-node';
+// import { Factory } from 'package:pip_services3_components-node';
+// import { Descriptor } from 'package:pip_services3_commons-node';
 
 // import { DummyController } from './DummyController';
 

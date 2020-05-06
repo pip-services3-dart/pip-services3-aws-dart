@@ -1,6 +1,6 @@
 // let assert = require('chai').assert;
 
-// import { ConfigParams } from 'pip-services3-commons-node';
+// import { ConfigParams } from 'package:pip_services3_commons-node';
 // import { AwsConnectionParams } from '../../src/connect/AwsConnectionParams';
 
 // suite('AwsConnectionParams', ()=> {

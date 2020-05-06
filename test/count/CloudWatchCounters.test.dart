@@ -1,7 +1,7 @@
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { References } from 'pip-services3-commons-node';
-// import { ContextInfo } from 'pip-services3-components-node';
-// import { Descriptor } from 'pip-services3-commons-node';
+// import { ConfigParams } from 'package:pip_services3_commons-node';
+// import { References } from 'package:pip_services3_commons-node';
+// import { ContextInfo } from 'package:pip_services3_components-node';
+// import { Descriptor } from 'package:pip_services3_commons-node';
 
 // import { CloudWatchCounters } from '../../src/count/CloudWatchCounters';
 // import { CountersFixture } from './CountersFixture';

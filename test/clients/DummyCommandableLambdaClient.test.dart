@@ -1,6 +1,6 @@
 // let process = require('process');
 
-// import { ConfigParams } from 'pip-services3-commons-node';
+// import { ConfigParams } from 'package:pip_services3_commons-node';
 // import { DummyClientFixture } from '../DummyClientFixture';
 // import { DummyCommandableLambdaClient } from './DummyCommandableLambdaClient';
 
