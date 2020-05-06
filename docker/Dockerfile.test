@@ -1,0 +1,15 @@
+# Start with the Dart image
+FROM google/dart:2.7.2
+
+# Set a working directory
+WORKDIR /app
+
+# Copy the entire project
+COPY . .
+
+# Install all dependencies
+RUN pub get
+RUN pub get --offline
+
+# Specify the command from running tests
+CMD pub run test
