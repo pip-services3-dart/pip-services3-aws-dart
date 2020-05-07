@@ -1,278 +1,256 @@
-//  @module count 
-//  @hidden 
-// let async = require('async');
+import 'dart:async';
 
-// import { IReferenceable } from 'package:pip_services3_commons-node';
-// import { CounterType } from 'package:pip_services3_components-node';
-// import { IReferences } from 'package:pip_services3_commons-node';
-// import { IOpenable } from 'package:pip_services3_commons-node';
-// import { CachedCounters, Counter } from 'package:pip_services3_components-node';
-// import { ConfigParams } from 'package:pip_services3_commons-node';
-// import { AwsConnectionResolver } from '../connect';
-// import { AwsConnectionParams } from '../connect';
-// import { CompositeLogger } from 'package:pip_services3_components-node';
-// import { ContextInfo } from 'package:pip_services3_components-node';
-// import { Descriptor } from 'package:pip_services3_commons-node';
-// import { CloudWatchUnit } from './CloudWatchUnit';
+import 'package:http/http.dart' as http;
+import 'package:aws_cloudwatch_api/monitoring-2010-08-01.dart';
 
-// 
-// /// Performance counters that periodically dumps counters to AWS Cloud Watch Metrics.
-// /// 
-// /// ### Configuration parameters ###
-// /// 
-// /// - connections:                   
-// ///     - discovery_key:         (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
-// ///     - region:                (optional) AWS region
-// /// - credentials:    
-// ///     - store_key:             (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
-// ///     - access_id:             AWS access/client id
-// ///     - access_key:            AWS access/client id
-// /// - options:
-// ///     - interval:              interval in milliseconds to save current counters measurements (default: 5 mins)
-// ///     - reset_timeout:         timeout in milliseconds to reset the counters. 0 disables the reset (default: 0)
-// /// 
-// /// ### References ###
-// /// 
-// /// - *:context-info:\*:\*:1.0      (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/info.contextinfo.html ContextInfo]] to detect the context id and specify counters source
-// /// - *:discovery:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connections
-// /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
-// /// 
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.counter.html Counter]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.cachedcounters.html CachedCounters]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/log.compositelogger.html CompositeLogger]] (in the Pip.Services components package)
-// /// 
-// /// ### Example ###
-// /// 
-// ///     let counters = new CloudWatchCounters();
-// ///     counters.config(ConfigParams.fromTuples(
-// ///         "connection.region", "us-east-1",
-// ///         "connection.access_id", "XXXXXXXXXXX",
-// ///         "connection.access_key", "XXXXXXXXXXX"
-// ///     ));
-// ///     counters.setReferences(References.fromTuples(
-// ///         new Descriptor("pip-services", "logger", "console", "default", "1.0"), 
-// ///         new ConsoleLogger()
-// ///     ));
-// ///     
-// ///     counters.open("123", (err) => {
-// ///         ...
-// ///     });
-// ///     
-// ///     counters.increment("mycomponent.mymethod.calls");
-// ///     let timing = counters.beginTiming("mycomponent.mymethod.exec_time");
-// ///     try {
-// ///         ...
-// ///     } finally {
-// ///         timing.endTiming();
-// ///     }
-// ///     
-// ///     counters.dump();
-//  
-// export class CloudWatchCounters extends CachedCounters implements IReferenceable, IOpenable {
-//     private _logger: CompositeLogger = new CompositeLogger();
+import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-//     private _connectionResolver: AwsConnectionResolver = new AwsConnectionResolver();
-//     private _connection: AwsConnectionParams;
-//     private _connectTimeout: number = 30000;
-//     private _client: any = null; //AmazonCloudWatchClient
+import '../connect/AwsConnectionParams.dart';
+import '../connect/AwsConnectionResolver.dart';
 
-//     private _source: string;
-//     private _instance: string;
-//     private _opened: boolean = false;
 
-//     
-//     /// Creates a new instance of this counters.
-//      
-//     public constructor() {
-//         super();
-//     }
+/// Performance counters that periodically dumps counters to AWS Cloud Watch Metrics.
+///
+/// ### Configuration parameters ###
+///
+/// - [connections]:
+///     - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
+///     - [region]:                (optional) AWS region
+/// - [credentials]:
+///     - [store_key]:             (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [access_id]:             AWS access/client id
+///     - [access_key]:            AWS access/client id
+/// - [options]:
+///     - [interval]:              interval in milliseconds to save current counters measurements (default: 5 mins)
+///     - [reset_timeout]:         timeout in milliseconds to reset the counters. 0 disables the reset (default: 0)
+///
+/// ### References ###
+///
+/// - *:context-info:\*:\*:1.0      (optional) [ContextInfo] to detect the context id and specify counters source
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connections
+/// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
+///
+/// See [Counter] (in the Pip.Services components package)
+/// See [CachedCounters] (in the Pip.Services components package)
+/// See [CompositeLogger] (in the Pip.Services components package)
+///
+/// ### Example ###
+///
+///     var counters = new CloudWatchCounters();
+///     counters.config(ConfigParams.fromTuples([
+///         'connection.region', 'us-east-1',
+///         'connection.access_id', 'XXXXXXXXXXX',
+///         'connection.access_key', 'XXXXXXXXXXX'
+///     ]));
+///     counters.setReferences(References.fromTuples([
+///         Descriptor('pip-services', 'logger', 'console', 'default', '1.0'),
+///         ConsoleLogger()
+///     ]));
+///
+///     await counters.open('123');
+///         ...
+///
+///     counters.increment('mycomponent.mymethod.calls');
+///     var timing = counters.beginTiming('mycomponent.mymethod.exec_time');
+///     try {
+///         ...
+///     } finally {
+///         timing.endTiming();
+///     }
+///
+///     counters.dump();
 
-//     
-//     /// Configures component by passing configuration parameters.
-//     /// 
-//     ///  -  config    configuration parameters to be set.
-//      
-//     public configure(config: ConfigParams): void {
-//         super.configure(config);
-//         this._connectionResolver.configure(config);
+class CloudWatchCounters extends CachedCounters
+    implements IReferenceable, IOpenable {
+  final _logger = CompositeLogger();
 
-//         this._source = config.getAsStringWithDefault('source', this._source);
-//         this._instance = config.getAsStringWithDefault('instance', this._instance);
-//         this._connectTimeout = config.getAsIntegerWithDefault("options.connect_timeout", this._connectTimeout);
-//     }
+  final _connectionResolver = AwsConnectionResolver();
+  AwsConnectionParams _connection;
+  int _connectTimeout = 30000;
+  CloudWatch _service; //AmazonCloudWatchClient
+  http.Client _client;
 
-// 	
-// 	/// Sets references to dependent components.
-// 	/// 
-// 	///  -  references 	references to locate the component dependencies. 
-// 	/// See [[https://rawgit.com/pip-services-node/package:pip_services3_commons-node/master/doc/api/interfaces/refer.ireferences.html IReferences]] (in the Pip.Services commons package)
-// 	 
-//     public setReferences(references: IReferences): void {
-//         this._logger.setReferences(references);
-//         this._connectionResolver.setReferences(references);
+  String _source;
+  String _instance;
+  bool _opened = false;
 
-//         let contextInfo = references.getOneOptional<ContextInfo>(
-//             new Descriptor("pip-services", "context-info", "default", "*", "1.0"));
-//         if (contextInfo != null && this._source == null)
-//             this._source = contextInfo.name;
-//         if (contextInfo != null && this._instance == null)
-//             this._instance = contextInfo.contextId;
-//     }
+  /// Creates a new instance of this counters.
+  CloudWatchCounters() : super();
 
-// 	
-// 	/// Checks if the component is opened.
-// 	/// 
-// 	/// Returns true if the component has been opened and false otherwise.
-// 	 
-//     public isOpen(): boolean {
-//         return this._opened;
-//     }
+  /// Configures component by passing configuration parameters.
+  ///
+  ///  -  [config]    configuration parameters to be set.
+  @override
+  void configure(ConfigParams config) {
+    super.configure(config);
+    _connectionResolver.configure(config);
 
-// 	
-// 	/// Opens the component.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-// 	 
-//     public open(String correlationId, callback: (err: any) => void): void {
-//         if (this._opened) {
-//             if (callback) callback(null);
-//             return;
-//         }
+    _source = config.getAsStringWithDefault('source', _source);
+    _instance = config.getAsStringWithDefault('instance', _instance);
+    _connectTimeout = config.getAsIntegerWithDefault(
+        'options.connect_timeout', _connectTimeout);
+  }
 
-//         this._opened = true;
+  /// Sets references to dependent components.
+  ///
+  ///  -  references 	references to locate the component dependencies.
+  /// See [IReferences] (in the Pip.Services commons package)
+  @override
+  void setReferences(IReferences references) {
+    _logger.setReferences(references);
+    _connectionResolver.setReferences(references);
 
-//         async.series([
-//             (callback) => {
-//                 this._connectionResolver.resolve(correlationId, (err, connection) => {
-//                     this._connection = connection;
-//                     callback(err);
-//                 });
-//             },
-//             (callback) => {
-//                 let aws = require('aws-sdk');
+    var contextInfo = references.getOneOptional<ContextInfo>(
+        Descriptor('pip-services', 'context-info', 'default', '*', '1.0'));
+    if (contextInfo != null && _source == null) {
+      _source = contextInfo.name;
+    }
+    if (contextInfo != null && _instance == null) {
+      _instance = contextInfo.contextId;
+    }
+  }
 
-//                 aws.config.update({
-//                     accessKeyId: this._connection.getAccessId(),
-//                     secretAccessKey: this._connection.getAccessKey(),
-//                     region: this._connection.getRegion()
-//                 });
+  /// Checks if the component is opened.
+  ///
+  /// Returns true if the component has been opened and false otherwise.
+  @override
+  bool isOpen() {
+    return _opened;
+  }
 
-//                 aws.config.httpOptions = {
-//                     timeout: this._connectTimeout
-//                 };
+  /// Opens the component.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return  			Future that receives error or null no errors occured.
+  @override
+  Future open(String correlationId) async {
+    if (_opened) {
+      return;
+    }
+    _opened = true;
+    _connection = await _connectionResolver.resolve(correlationId);
+    //_connectTimeout
+    final credentials = AwsClientCredentials(
+        accessKey: _connection.getAccessId(),
+        secretKey: _connection.getAccessKey());
+    _client = http.Client();
+    _service = CloudWatch(
+        region: _connection.getRegion(),
+        credentials: credentials,
+        client: _client);
+  }
 
-//                 this._client = new aws.CloudWatch({ apiVersion: '2010-08-01' });
+  /// Closes component and frees used resources.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return  			Future that receives error or null no errors occured.
+  @override
+  Future close(String correlationId) async {
+    if (_client != null) {
+      _client.close();
+    }
+    _opened = false;
+    _service = null;
+  }
 
-//                 callback();
-//             }
-//         ], callback);
-//     }
+  MetricDatum _getCounterData(
+      Counter counter, DateTime now, List<Dimension> dimensions) {
+    MetricDatum value;
 
-// 	
-// 	/// Closes component and frees used resources.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-// 	 
-//     public close(String correlationId, callback: (err: any) => void): void {
-//         this._opened = false;
-//         this._client = null;
+    switch (counter.type) {
+      case CounterType.Increment:
+        MetricDatum(
+            metricName: counter.name,
+            timestamp: counter.time,
+            dimensions: dimensions,
+            unit: StandardUnit.count,
+            value: counter.count.toDouble());
+        break;
+      case CounterType.Interval:
+        var stat = StatisticSet(
+            maximum: counter.max.toDouble(),
+            minimum: counter.min.toDouble(),
+            sum: counter.count.toDouble(),
+            sampleCount: counter.count.toDouble());
+        MetricDatum(
+            metricName: counter.name,
+            timestamp: counter.time,
+            dimensions: dimensions,
+            unit: StandardUnit.milliseconds,
+            statisticValues: stat);
+        break;
+      case CounterType.Statistics:
+        var stat = StatisticSet(
+            maximum: counter.max.toDouble(),
+            minimum: counter.min.toDouble(),
+            sum: counter.count.toDouble(),
+            sampleCount: counter.count.toDouble());
+        MetricDatum(
+            metricName: counter.name,
+            timestamp: counter.time,
+            dimensions: dimensions,
+            unit: StandardUnit.none,
+            statisticValues: stat,
+            value: counter.average);
+        break;
+      case CounterType.LastValue:
+        MetricDatum(
+            metricName: counter.name,
+            timestamp: counter.time,
+            dimensions: dimensions,
+            unit: StandardUnit.none,
+            value: counter.last.toDouble());
+        break;
+      case CounterType.Timestamp:
+        MetricDatum(
+            metricName: counter.name,
+            timestamp: counter.time,
+            dimensions: dimensions,
+            unit: StandardUnit.none,
+            value: counter.time.millisecondsSinceEpoch.toDouble());
+        break;
+    }
 
-//         if (callback) callback(null);
-//     }
+    return value;
+  }
 
-//     private getCounterData(counter: Counter, now: Date, dimensions: any[]): any {
-//         let value = {
-//             MetricName: counter.name,
-//             Timestamp: counter.time,
-//             Dimensions: dimensions,
-//             Unit: CloudWatchUnit.None,
-//         }
+  /// Saves the current counters measurements.
+  ///
+  ///  -  [counters]      current counters measurements to be saves.
+  @override
+  Future save(List<Counter> counters) async {
+    if (_service == null) return;
 
-//         switch (counter.type) {
-//             case CounterType.Increment:
-//                 value['Value'] = counter.count;
-//                 value.Unit = CloudWatchUnit.Count;
-//                 break;
-//             case CounterType.Interval:
-//                 value.Unit = CloudWatchUnit.Milliseconds;
-//                 //value.Value = counter.average;
-//                 value['StatisticValues'] = {
-//                     SampleCount: counter.count,
-//                     Maximum: counter.max,
-//                     Minimum: counter.min,
-//                     Sum: counter.count/// counter.average
-//                 };
-//                 break;
-//             case CounterType.Statistics:
-//                 //value.Value = counter.average;
-//                 value['StatisticValues'] = {
-//                     SampleCount: counter.count,
-//                     Maximum: counter.max,
-//                     Minimum: counter.min,
-//                     Sum: counter.count/// counter.average
-//                 };
-//                 break;
-//             case CounterType.LastValue:
-//                 value['Value'] = counter.last;
-//                 break;
-//             case CounterType.Timestamp:
-//                 value['Value'] = counter.time.getTime();
-//                 break;
-//         }
+    var dimensions = <Dimension>[];
+    dimensions.add(Dimension(name: 'InstanceID', value: _instance));
 
-//         return value;
-//     }
+    var now = DateTime.now();
+    var data = [];
 
-//     
-//     /// Saves the current counters measurements.
-//     /// 
-//     ///  -  counters      current counters measurements to be saves.
-//      
-//     protected save(counters: Counter[]): void {
-//         if (this._client == null) return;
+    for (var counter in counters) {
+      data.add(_getCounterData(counter, now, dimensions));
 
-//         let dimensions = [];
-//         dimensions.push({
-//             Name: "InstanceID",
-//             Value: this._instance
-//         });
+      if (data.length >= 20) {
+        try {
+          await _service.putMetricData(metricData: data, namespace: _source);
+        } catch (ex) {
+          if (_logger != null) {
+            _logger.error('cloudwatch_counters', ex, 'putMetricData error');
+          }
+        }
+        data = [];
+      }
+    }
 
-//         let now = new Date();
-
-//         let data = [];
-//         counters.forEach(counter => {
-//             data.push(this.getCounterData(counter, now, dimensions))
-
-//             if (data.length >= 20) {
-//                 async.series([
-//                     (callback) => {
-//                         this._client.putMetricData(params, function (err, data) {
-//                             if (err) {
-//                                 if (this._logger) this._logger.error("cloudwatch_counters", err, "putMetricData error");
-//                             }
-//                             callback(err);
-//                         });
-//                     },
-//                     (callback) => {
-//                         data = [];
-//                         callback();
-//                     }]);
-//             }
-//         });
-
-//         var params = {
-//             MetricData: data,
-//             Namespace: this._source
-//         };
-
-//         if (data.length > 0) {
-//             this._client.putMetricData(params, function (err, data) {
-//                 if (err) {
-//                     if (this._logger) this._logger.error("cloudwatch_counters", err, "putMetricData error");
-//                 }
-//             });
-//         }
-//     }
-// }
+    if (data.isNotEmpty) {
+      try {
+        await _service.putMetricData(metricData: data, namespace: _source);
+      } catch (err) {
+        if (_logger != null) {
+          _logger.error('cloudwatch_counters', err, 'putMetricData error');
+        }
+      }
+    }
+  }
+}

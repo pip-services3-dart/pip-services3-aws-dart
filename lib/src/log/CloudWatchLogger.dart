@@ -1,346 +1,284 @@
-//  @module log 
-//  @hidden 
-// let async = require('async');
+import 'dart:async';
 
-// import { IReferenceable } from 'package:pip_services3_commons-node';
-// import { LogLevel } from 'package:pip_services3_components-node';
-// import { IReferences } from 'package:pip_services3_commons-node';
-// import { IOpenable } from 'package:pip_services3_commons-node';
-// import { CachedLogger } from 'package:pip_services3_components-node';
-// import { LogMessage } from 'package:pip_services3_components-node';
-// import { ConfigException } from 'package:pip_services3_commons-node';
-// import { ConfigParams } from 'package:pip_services3_commons-node';
-// import { AwsConnectionResolver } from '../connect';
-// import { AwsConnectionParams } from '../connect';
-// import { CompositeLogger } from 'package:pip_services3_components-node';
-// import { ContextInfo } from 'package:pip_services3_components-node';
-// import { Descriptor } from 'package:pip_services3_commons-node'
+import 'package:aws_logs_api/logs-2014-03-28.dart';
 
-// 
-// /// Logger that writes log messages to AWS Cloud Watch Log.
-// /// 
-// /// ### Configuration parameters ###
-// /// 
-// /// - stream:                        (optional) Cloud Watch Log stream (default: context name)
-// /// - group:                         (optional) Cloud Watch Log group (default: context instance ID or hostname)
-// /// - connections:                   
-// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
-// ///     - region:                      (optional) AWS region
-// /// - credentials:    
-// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
-// ///     - access_id:                   AWS access/client id
-// ///     - access_key:                  AWS access/client id
-// /// - options:
-// ///     - interval:        interval in milliseconds to save current counters measurements (default: 5 mins)
-// ///     - reset_timeout:   timeout in milliseconds to reset the counters. 0 disables the reset (default: 0)
-// /// 
-// /// ### References ###
-// /// 
-// /// - *:context-info:\*:\*:1.0      (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/info.contextinfo.html ContextInfo]] to detect the context id and specify counters source
-// /// - *:discovery:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connections
-// /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
-// /// 
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.counter.html Counter]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/count.cachedcounters.html CachedCounters]] (in the Pip.Services components package)
-// /// See [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/log.compositelogger.html CompositeLogger]] (in the Pip.Services components package)
+import 'package:http/http.dart' as http;
 
-// /// 
-// /// ### Example ###
-// /// 
-// ///     let logger = new Logger();
-// ///     logger.config(ConfigParams.fromTuples(
-// ///         "stream", "mystream",
-// ///         "group", "mygroup",
-// ///         "connection.region", "us-east-1",
-// ///         "connection.access_id", "XXXXXXXXXXX",
-// ///         "connection.access_key", "XXXXXXXXXXX"
-// ///     ));
-// ///     logger.setReferences(References.fromTuples(
-// ///         new Descriptor("pip-services", "logger", "console", "default", "1.0"), 
-// ///         new ConsoleLogger()
-// ///     ));
-// ///     
-// ///     logger.open("123", (err) => {
-// ///         ...
-// ///     });
-// ///     
-// ///     logger.setLevel(LogLevel.debug);
-// ///     
-// ///     logger.error("123", ex, "Error occured: %s", ex.message);
-// ///     logger.debug("123", "Everything is OK.");
-//  
-// export class CloudWatchLogger extends CachedLogger implements IReferenceable, IOpenable {
-//     private _timer: any;
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import 'package:pip_services3_components/pip_services3_components.dart';
 
-//     private _connectionResolver: AwsConnectionResolver = new AwsConnectionResolver();
-//     private _client: any = null; //AmazonCloudWatchLogsClient
-//     private _connection: AwsConnectionParams;
-//     private _connectTimeout: number = 30000;
+import '../connect/AwsConnectionParams.dart';
+import '../connect/AwsConnectionResolver.dart';
 
-//     private _group: string = "undefined";
-//     private _stream: string = null;
-//     private _lastToken: string = null;
+/// Logger that writes log messages to AWS Cloud Watch Log.
+///
+/// ### Configuration parameters ###
+///
+/// - [stream]:                        (optional) Cloud Watch Log stream (default: context name)
+/// - [group]:                         (optional) Cloud Watch Log group (default: context instance ID or hostname)
+/// - [connections]:
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
+///     - [region]:                      (optional) AWS region
+/// - [credentials]:
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
+///     - [access_id]:                   AWS access/client id
+///     - [access_key]:                  AWS access/client id
+/// - [options]:
+///     - [interval]:        interval in milliseconds to save current counters measurements (default: 5 mins)
+///     - [reset_timeout]:   timeout in milliseconds to reset the counters. 0 disables the reset (default: 0)
+///
+/// ### References ###
+///
+/// - *:context-info:\*:\*:1.0      (optional) [ContextInfo] to detect the context id and specify counters source
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connections
+/// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
+///
+/// See [Counter] (in the Pip.Services components package)
+/// See [CachedCounters] (in the Pip.Services components package)
+/// See [CompositeLogger] (in the Pip.Services components package)
 
-//     private _logger: CompositeLogger = new CompositeLogger();
+///
+/// ### Example ###
+///
+///     var logger =  Logger();
+///     logger.config(ConfigParams.fromTuples(
+///         'stream', 'mystream',
+///         'group', 'mygroup',
+///         'connection.region', 'us-east-1',
+///         'connection.access_id', 'XXXXXXXXXXX',
+///         'connection.access_key', 'XXXXXXXXXXX'
+///     ));
+///     logger.setReferences(References.fromTuples([
+///          Descriptor('pip-services', 'logger', 'console', 'default', '1.0'),
+///          ConsoleLogger()
+///     ]));
+///
+///     logger.open('123');
+///         ...
+///
+///     logger.setLevel(LogLevel.debug);
+///
+///     logger.error('123', ex, 'Error occured: %s', ex.message);
+///     logger.debug('123', 'Everything is OK.');
 
-//     
-//     /// Creates a new instance of this logger.
-//      
-//     public constructor() {
-//         super();
-//     }
+class CloudWatchLogger extends CachedLogger
+    implements IReferenceable, IOpenable {
+  Timer _timer;
 
-//     
-//     /// Configures component by passing configuration parameters.
-//     /// 
-//     ///  -  config    configuration parameters to be set.
-//      
-//     public configure(config: ConfigParams): void {
-//         super.configure(config);
-//         this._connectionResolver.configure(config);
+  final _connectionResolver = AwsConnectionResolver();
+  CloudWatchLogs _service; //AmazonCloudWatchLogsClient
+  http.Client _client;
+  AwsConnectionParams _connection;
+  int _connectTimeout = 30000;
 
-//         this._group = config.getAsStringWithDefault('group', this._group);
-//         this._stream = config.getAsStringWithDefault('stream', this._stream);
-//         this._connectTimeout = config.getAsIntegerWithDefault("options.connect_timeout", this._connectTimeout);
-//     }
+  String _group = 'undefined';
+  String _stream;
+  String _lastToken;
 
-// 	
-// 	/// Sets references to dependent components.
-// 	/// 
-// 	///  -  references 	references to locate the component dependencies. 
-// 	/// See [[https://rawgit.com/pip-services-node/package:pip_services3_commons-node/master/doc/api/interfaces/refer.ireferences.html IReferences]] (in the Pip.Services commons package)
-// 	 
-//     public setReferences(references: IReferences): void {
-//         super.setReferences(references);
-//         this._logger.setReferences(references);
-//         this._connectionResolver.setReferences(references);
+  final _logger = CompositeLogger();
 
-//         let contextInfo = references.getOneOptional<ContextInfo>(
-//             new Descriptor("pip-services", "context-info", "default", "*", "1.0"));
-//         if (contextInfo != null && this._stream == null)
-//             this._stream = contextInfo.name;
-//         if (contextInfo != null && this._group == null)
-//             this._group = contextInfo.contextId;
-//     }
+  /// Creates a new instance of this logger.
+  CloudWatchLogger() : super();
 
-//     
-//     /// Writes a log message to the logger destination.
-//     /// 
-//     ///  -  level             a log level.
-//     ///  -  correlationId     (optional) transaction id to trace execution through call chain.
-//     ///  -  error             an error object associated with this message.
-//     ///  -  message           a human-readable message to log.
-//      
-//     protected write(level: LogLevel, String correlationId, ex: Error, message: string): void {
-//         if (this._level < level) {
-//             return;
-//         }
+  /// Configures component by passing configuration parameters.
+  ///
+  ///  -  [config]    configuration parameters to be set.
+  @override
+  void configure(ConfigParams config) {
+    super.configure(config);
+    _connectionResolver.configure(config);
 
-//         super.write(level, correlationId, ex, message);
-//     }
+    _group = config.getAsStringWithDefault('group', _group);
+    _stream = config.getAsStringWithDefault('stream', _stream);
+    _connectTimeout = config.getAsIntegerWithDefault(
+        'options.connect_timeout', _connectTimeout);
+  }
 
-// 	
-// 	/// Checks if the component is opened.
-// 	/// 
-// 	/// Returns true if the component has been opened and false otherwise.
-// 	 
-//     public isOpen(): boolean {
-//         return this._timer != null;
-//     }
+  /// Sets references to dependent components.
+  ///
+  ///  -  [references] 	references to locate the component dependencies.
+  /// See [IReferences] (in the Pip.Services commons package)
+  @override
+  void setReferences(IReferences references) {
+    super.setReferences(references);
+    _logger.setReferences(references);
+    _connectionResolver.setReferences(references);
 
-// 	
-// 	/// Opens the component.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-// 	 
-//     public open(String correlationId, callback: (err: any) => void): void {
-//         if (this.isOpen()) {
-//             callback(null);
-//             return;
-//         }
+    var contextInfo = references.getOneOptional<ContextInfo>(
+        Descriptor('pip-services', 'context-info', 'default', '*', '1.0'));
+    if (contextInfo != null && this._stream == null) {
+      _stream = contextInfo.name;
+    }
+    if (contextInfo != null && this._group == null) {
+      _group = contextInfo.contextId;
+    }
+  }
 
-//         async.series([
-//             (callback) => {
-//                 this._connectionResolver.resolve(correlationId, (err, connection) => {
-//                     this._connection = connection;
-//                     callback(err);
-//                 });
-//             },
-//             (callback) => {
-//                 let aws = require('aws-sdk');
+  /// Writes a log message to the logger destination.
+  ///
+  ///  -  [level]             a log level.
+  ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
+  ///  -  [error]             an error object associated with this message.
+  ///  -  [message]           a human-readable message to log.
+  @override
+  void write(
+      LogLevel level, String correlationId, Exception ex, String message) {
+    if (getLevel().index < level.index) {
+      return;
+    }
+    super.write(level, correlationId, ex, message);
+  }
 
-//                 aws.config.update({
-//                     accessKeyId: this._connection.getAccessId(),
-//                     secretAccessKey: this._connection.getAccessKey(),
-//                     region: this._connection.getRegion()
-//                 });
+  /// Checks if the component is opened.
+  ///
+  /// Returns true if the component has been opened and false otherwise.
+  @override
+  bool isOpen() {
+    return _timer != null;
+  }
 
-//                 aws.config.httpOptions = {
-//                     timeout: this._connectTimeout
-//                 };
+  /// Opens the component.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return 			Future that receives  null no errors occured.
+  /// Throws error
+  @override
+  Future open(String correlationId) async {
+    if (isOpen()) {
+      return;
+    }
 
-//                 this._client = new aws.CloudWatchLogs({ apiVersion: '2014-03-28' });
+    _connection = await _connectionResolver.resolve(correlationId);
 
-//                 let params = {
-//                     logGroupName: this._group
-//                 };
+    //timeout: this._connectTimeout
 
-//                 this._client.createLogGroup(params, (err, data) => {
-//                     if (err && err.code != "ResourceAlreadyExistsException") {
-//                         callback(err);
-//                     }
-//                     else {
-//                         callback();
-//                     }
-//                 });
-//             },
-//             (callback) => {
-//                 let paramsStream = {
-//                     logGroupName: this._group,
-//                     logStreamName: this._stream
-//                 };
+    _client = http.Client();
+    final credentials = AwsClientCredentials(
+        accessKey: _connection.getAccessId(),
+        secretKey: _connection.getAccessKey());
+    _service = CloudWatchLogs(
+        region: _connection.getRegion(),
+        credentials: credentials,
+        client: _client);
 
-//                 this._client.createLogStream(paramsStream, (err, data) => {
-//                     if (err) {
-//                         if (err.code == "ResourceAlreadyExistsException") {
+    try {
+      await _service.createLogGroup(logGroupName: _group);
+    } catch (err) {
+      if (!(err is ResourceAlreadyExistsException)) {
+        rethrow;
+      }
+    }
 
-//                             let params = {
-//                                 logGroupName: this._group,
-//                                 logStreamNamePrefix: this._stream,
-//                             };
+    try {
+      await _service.createLogStream(
+          logGroupName: _group, logStreamName: _stream);
+      _lastToken = null;
+    } catch (err) {
+      if (err is ResourceAlreadyExistsException) {
+        var data = await _service.describeLogStreams(
+            logGroupName: _group, logStreamNamePrefix: _stream);
+        if (data.logStreams.isNotEmpty) {
+          _lastToken = data.logStreams[0].uploadSequenceToken;
+        }
+      } else {
+        rethrow;
+      }
+    }
 
-//                             this._client.describeLogStreams(params, (err, data) => {
-//                                 if (data.logStreams.length > 0) {
-//                                     this._lastToken = data.logStreams[0].uploadSequenceToken;
-//                                 }
-//                                 callback(err)
-//                             });
+    _timer ??= Timer.periodic(Duration(milliseconds: interval), (tm) {
+      dump();
+    });
+  }
 
-//                         }
-//                         else {
-//                             callback(err);
-//                         }
-//                     }
-//                     else {
-//                         this._lastToken = null;
-//                         callback(err);
-//                     }
-//                 });
-//             },
-//             (callback) => {
-//                 if (this._timer == null) {
-//                     this._timer = setInterval(() => { this.dump() }, this._interval);
-//                 }
+  /// Closes component and frees used resources.
+  ///
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  Return 			Future that receives error or null no errors occured.
+  @override
+  Future close(String correlationId) async {
+    await save(cache);
 
-//                 callback();
-//             }
-//         ], callback);
+    if (_timer != null) {
+      _timer.cancel();
+    }
 
-//     }
+    cache = [];
+    _timer = null;
+    _service = null;
+  }
 
-// 	
-// 	/// Closes component and frees used resources.
-// 	/// 
-// 	///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-//     ///  -  callback 			callback function that receives error or null no errors occured.
-// 	 
-//     public close(String correlationId, callback: (err: any) => void): void {
-//         this.save(this._cache, (err) => {
-//             if (this._timer)
-//                 clearInterval(this._timer);
+  String _formatMessageText(LogMessage message) {
+    var result = '';
+    result += '[' +
+        (message.source ?? '---') +
+        ':' +
+        (message.correlation_id ?? '---') +
+        ':' +
+        message.level +
+        '] ' +
+        message.message;
+    if (message.error != null) {
+      if (message.message == null || message.message.isEmpty) {
+        result += 'Error: ';
+      } else {
+        result += ': ';
+      }
 
-//             this._cache = [];
-//             this._timer = null;
-//             this._client = null;
+      result += message.error.message;
 
-//             if (callback) callback(null);
-//         });
-//     }
+      if (message.error.stack_trace != null &&
+          message.error.stack_trace.isNotEmpty) {
+        result += ' StackTrace: ' + message.error.stack_trace;
+      }
+    }
 
-//     private formatMessageText(message: LogMessage): string {
-//         let result: string = "";
-//         result += "[" + (message.source ? message.source : "---") + ":" +
-//             (message.correlation_id ? message.correlation_id : "---") + ":" + message.level + "] " +
-//             message.message;
-//         if (message.error != null) {
-//             if (!message.message) {
-//                 result += "Error: ";
-//             } else {
-//                 result += ": ";
-//             }
+    return result;
+  }
 
-//             result += message.error.message;
+  /// Saves log messages from the cache.
+  ///
+  ///  -  [messages]  a list with log messages
+  ///  Return  Future that receives error or null for success.
+  @override
+  Future save(List<LogMessage> messages) async {
+    if (!isOpen() || messages == null || messages.isEmpty) {
+      return;
+    }
 
-//             if (message.error.stack_trace) {
-//                 result += " StackTrace: " + message.error.stack_trace;
-//             }
-//         }
+    if (_service == null) {
+      throw ConfigException(
+          'cloudwatch_logger', 'NOT_OPENED', 'CloudWatchLogger is not opened');
+    }
 
-//         return result;
-//     }
+    var events = <InputLogEvent>[];
 
-//     
-//     /// Saves log messages from the cache.
-//     /// 
-//     ///  -  messages  a list with log messages
-//     ///  -  callback  callback function that receives error or null for success.
-//      
-//     protected save(messages: LogMessage[], callback: (err: any) => void): void {
-//         if (!this.isOpen() || messages == null || messages.length == 0) {
-//             if (callback) callback(null);
-//             return;
-//         }
+    for (var message in messages) {
+      var event = InputLogEvent(
+          message: message.message,
+          timestamp: message.time.millisecondsSinceEpoch);
+      events.add(event);
+    }
 
-//         if (this._client == null) {
-//             let err = new ConfigException("cloudwatch_logger", 'NOT_OPENED', 'CloudWatchLogger is not opened');
+    // get token again if saving log from another container
 
-//             if (err != null) {
-//                 callback(err);
-//                 return;
-//             }
-//         }
+    var data = await _service.describeLogStreams(
+        logGroupName: _group, logStreamNamePrefix: _stream);
 
-//         let events = [];
-//         messages.forEach(message => {
-//             events.push({
-//                 timestamp: message.time.getTime(),
-//                 message: this.formatMessageText(message)
-//             });
-//         });
+    if (data.logStreams.isNotEmpty) {
+      _lastToken = data.logStreams[0].uploadSequenceToken;
+    }
 
-//         let params = {
-//             logEvents: events,
-//             logGroupName: this._group,
-//             logStreamName: this._stream,
-//             sequenceToken: this._lastToken
-//         };
-
-
-//         async.series([
-//             (callback) => {
-//                 // get token again if saving log from another container
-//                 let describeParams = {
-//                     logGroupName: this._group,
-//                     logStreamNamePrefix: this._stream,
-//                 }
-//                 this._client.describeLogStreams(describeParams, (err, data) => {
-//                     if (data.logStreams.length > 0) {
-//                         this._lastToken = data.logStreams[0].uploadSequenceToken;
-//                     }
-//                     callback();
-//                 });
-//             },
-//             (callback) => {
-//                 this._client.putLogEvents(params, (err, data) => {
-//                     if (err) {
-//                         if (this._logger) this._logger.error("cloudwatch_logger", err, "putLogEvents error");
-//                     } else {
-//                         this._lastToken = data.nextSequenceToken;
-//                     }
-//                     callback();
-//                 });
-//             }
-//         ]);
-//     }
-// }
+    try {
+      var data = await _service.putLogEvents(
+          logEvents: events,
+          logGroupName: _group,
+          logStreamName: _stream,
+          sequenceToken: _lastToken);
+      _lastToken = data.nextSequenceToken;
+    } catch (err) {
+      if (_logger != null) {
+        _logger.error('cloudwatch_logger', err, 'putLogEvents error');
+      }
+    }
+  }
+}

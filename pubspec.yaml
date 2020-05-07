@@ -12,6 +12,9 @@ dependencies:
   pip_services3_components: ">=1.0.2 <2.0.0"
   pip_services3_container: ">=1.0.0 <2.0.0"
   aws_client: ^0.2.0
+  aws_lambda_dart_runtime: ^1.0.3
+  aws_cloudwatch_api: ^0.0.3
+  aws_logs_api: ^0.0.1
  
 dev_dependencies:
   test: '>=1.14.2 <2.0.0'

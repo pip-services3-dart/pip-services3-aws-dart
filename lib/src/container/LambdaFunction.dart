@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+
+import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart' as aws;
+import 'package:aws_lambda_dart_runtime/runtime/context.dart' as awsctx;
+
 import 'package:pip_services3_commons/pip_services3_commons.dart';
 import 'package:pip_services3_container/pip_services3_container.dart';
 import 'package:pip_services3_components/pip_services3_components.dart';
@@ -210,33 +214,27 @@ abstract class LambdaFunction extends Container {
     actions[cmd] = actionCurl;
   }
 
-  Future _execute(event, context) async {
+  Future<aws.InvocationResult> _execute(event, awsctx.Context context) async {
     String cmd = event.cmd;
     var correlationId = event.correlation_id;
 
     if (cmd == null) {
-      var err = BadRequestException(
+      throw BadRequestException(
           correlationId, 'NO_COMMAND', 'Cmd parameter is missing');
-
-      context.done(err, null);
-      return;
     }
 
     var action = actions[cmd];
     if (action == null) {
-      var err = BadRequestException(
+      throw BadRequestException(
               correlationId, 'NO_ACTION', 'Action ' + cmd + ' was not found')
           .withDetails('command', cmd);
-
-      context.done(err, null);
-      return;
     }
 
-    var result = await action(event);
-    context.done(null, result);
+    return await action(event);
+    
   }
 
-  Future _handler(event, context) async {
+  Future<aws.InvocationResult> _handler<T>(awsctx.Context context, T event) async {
     // If already started then execute
     if (isOpen()) {
       await _execute(event, context);
@@ -245,9 +243,9 @@ abstract class LambdaFunction extends Container {
     else {
       try {
         await run();
-        await _execute(event, context);
+        return await _execute(event, context);
       } catch (err) {
-        context.done(err, null);
+        return aws.InvocationResult(context.requestId, err.toString());
       }
     }
   }
@@ -256,13 +254,11 @@ abstract class LambdaFunction extends Container {
   ///
   ///  -  [event]     an incoming event object with invocation parameters.
   ///  -  [context]   a context object with local references.
-  Function(dynamic, dynamic) getHandler() {
-    var self = this;
-
+  aws.Handler<T> getHandler<T>() {
     // Return plugin function
-    return (event, context) {
+    return (awsctx.Context context, T event) {
       // Calling run with changed context
-      return self._handler(event, context);
+      return _handler<T>(context, event);
     };
   }
 
@@ -272,11 +268,11 @@ abstract class LambdaFunction extends Container {
   ///
   /// This method shall only be used in testing.
   ///
-  ///  -  params action parameters.
+  ///  -  [params] action parameters.
   ///  -  Return  Future that receives action result
   /// Throws error.
   Future act(params) async {
-    var context = {};//{'done': callback};
-    await getHandler()(params, context);
+    var context = awsctx.Context();
+    await getHandler()(context, params);
   }
 }
