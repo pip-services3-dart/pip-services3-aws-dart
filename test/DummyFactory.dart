@@ -1,15 +1,15 @@
-// import { Factory } from 'package:pip_services3_components-node';
-// import { Descriptor } from 'package:pip_services3_commons-node';
+import 'package:pip_services3_components/pip_services3_components.dart';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// import { DummyController } from './DummyController';
+import './DummyController.dart';
 
-// export class DummyFactory extends Factory {
-// 	public static Descriptor = new Descriptor("pip-services-dummies", "factory", "default", "default", "1.0");
-// 	public static ControllerDescriptor = new Descriptor("pip-services-dummies", "controller", "default", "*", "1.0");
-	
-// 	public constructor() {
-// 		super();
-// 		this.registerAsType(DummyFactory.ControllerDescriptor, DummyController);
-// 	}
-	
-// }
+class DummyFactory extends Factory {
+  static final descriptor = Descriptor(
+      'pip-services-dummies', 'factory', 'default', 'default', '1.0');
+  static final ControllerDescriptor =
+      Descriptor('pip-services-dummies', 'controller', 'default', '*', '1.0');
+
+  DummyFactory() : super() {
+    registerAsType(DummyFactory.ControllerDescriptor, DummyController);
+  }
+}

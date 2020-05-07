@@ -1,95 +1,68 @@
-// import { CommandSet } from 'package:pip_services3_commons-node';
-// import { ICommand } from 'package:pip_services3_commons-node';
-// import { Command } from 'package:pip_services3_commons-node';
-// import { Parameters } from 'package:pip_services3_commons-node';
-// import { FilterParams } from 'package:pip_services3_commons-node';
-// import { PagingParams } from 'package:pip_services3_commons-node';
-// import { ObjectSchema } from 'package:pip_services3_commons-node';
-// import { Schema} from 'package:pip_services3_commons-node';
-// import { MapSchema } from 'package:pip_services3_commons-node';
-// import { TypeCode } from 'package:pip_services3_commons-node';
-// import { FilterParamsSchema } from 'package:pip_services3_commons-node';
-// import { PagingParamsSchema } from 'package:pip_services3_commons-node';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// import { Dummy } from './Dummy';
-// import { IDummyController } from './IDummyController';
-// import { DummySchema } from './DummySchema';
+import './Dummy.dart';
+import './IDummyController.dart';
+import './DummySchema.dart';
 
-// export class DummyCommandSet extends CommandSet {
-//     private _controller: IDummyController;
+class DummyCommandSet extends CommandSet {
+  IDummyController _controller;
 
-// 	constructor(controller: IDummyController) {
-// 		super();
+  DummyCommandSet(IDummyController controller) : super() {
+    _controller = controller;
 
-// 		this._controller = controller;
+    addCommand(_makeGetPageByFilterCommand());
+    addCommand(_makeGetOneByIdCommand());
+    addCommand(_makeCreateCommand());
+    addCommand(_makeUpdateCommand());
+    addCommand(_makeDeleteByIdCommand());
+  }
 
-// 		this.addCommand(this.makeGetPageByFilterCommand());
-// 		this.addCommand(this.makeGetOneByIdCommand());
-// 		this.addCommand(this.makeCreateCommand());
-// 		this.addCommand(this.makeUpdateCommand());
-// 		this.addCommand(this.makeDeleteByIdCommand());
-// 	}
+  ICommand _makeGetPageByFilterCommand() {
+    return Command(
+        'get_dummies',
+        ObjectSchema(true)
+            .withOptionalProperty('filter', FilterParamsSchema())
+            .withOptionalProperty('paging', PagingParamsSchema()),
+        (String correlationId, Parameters args) {
+      var filter = FilterParams.fromValue(args.get('filter'));
+      var paging = PagingParams.fromValue(args.get('paging'));
+      return _controller.getPageByFilter(correlationId, filter, paging);
+    });
+  }
 
-// 	private makeGetPageByFilterCommand(): ICommand {
-// 		return new Command(
-// 			"get_dummies",
-// 			new ObjectSchema(true)
-//                 .withOptionalProperty("filter", new FilterParamsSchema())
-//                 .withOptionalProperty("paging", new PagingParamsSchema()),
-// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
-// 				let filter = FilterParams.fromValue(args.get("filter"));
-// 				let paging = PagingParams.fromValue(args.get("paging"));
-// 				this._controller.getPageByFilter(correlationId, filter, paging, callback);
-// 			}
-// 		);
-// 	}
+  ICommand _makeGetOneByIdCommand() {
+    return Command('get_dummy_by_id',
+        ObjectSchema(true).withRequiredProperty('dummy_id', TypeCode.String),
+        (String correlationId, Parameters args) {
+      var id = args.getAsString('dummy_id');
+      return _controller.getOneById(correlationId, id);
+    });
+  }
 
-// 	private makeGetOneByIdCommand(): ICommand {
-// 		return new Command(
-// 			"get_dummy_by_id",
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy_id", TypeCode.String),
-// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
-// 				let id = args.getAsString("dummy_id");
-// 				this._controller.getOneById(correlationId, id, callback);
-// 			}
-// 		);
-// 	}
+  ICommand _makeCreateCommand() {
+    return Command('create_dummy',
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema()),
+        (String correlationId, Parameters args) {
+      var entity = Dummy.fromJson(args.get('dummy'));
+      return _controller.create(correlationId, entity);
+    });
+  }
 
-// 	private makeCreateCommand(): ICommand {
-// 		return new Command(
-// 			"create_dummy",
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema()),
-// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
-// 				let entity: Dummy = args.get("dummy");
-// 				this._controller.create(correlationId, entity, callback);
-// 			}
-// 		);
-// 	}
+  ICommand _makeUpdateCommand() {
+    return Command('update_dummy',
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema()),
+        (String correlationId, Parameters args) {
+      var entity = Dummy.fromJson(args.get('dummy'));
+      return _controller.update(correlationId, entity);
+    });
+  }
 
-// 	private makeUpdateCommand(): ICommand {
-// 		return new Command(
-// 			"update_dummy",
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema()),
-// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
-// 				let entity: Dummy = args.get("dummy");
-// 				this._controller.update(correlationId, entity, callback);
-// 			}
-// 		);
-// 	}
-
-// 	private makeDeleteByIdCommand(): ICommand {
-// 		return new Command(
-// 			"delete_dummy",
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy_id", TypeCode.String),
-// 			(String correlationId, args: Parameters, callback: (err: any, result: any) => void) => {
-// 				let id = args.getAsString("dummy_id");
-// 				this._controller.deleteById(correlationId, id, callback);
-// 			}
-// 		);
-// 	}
-
-// }
+  ICommand _makeDeleteByIdCommand() {
+    return Command('delete_dummy',
+        ObjectSchema(true).withRequiredProperty('dummy_id', TypeCode.String),
+        (String correlationId, Parameters args) {
+      var id = args.getAsString('dummy_id');
+      return _controller.deleteById(correlationId, id);
+    });
+  }
+}

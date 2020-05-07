@@ -16,9 +16,9 @@ import 'package:pip_services3_components/pip_services3_components.dart';
 /// - [client_key]:    alternative to access_key
 /// - [secret_key]:    alternative to access_key
 ///
-/// In addition to standard parameters [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/classes/auth.credentialparams.html CredentialParams]] may contain any number of custom parameters
+/// In addition to standard parameters [CredentialParams] may contain any number of custom parameters
 ///
-/// See [[AwsConnectionResolver]]
+/// See [AwsConnectionResolver]
 ///
 /// ### Example ###
 ///

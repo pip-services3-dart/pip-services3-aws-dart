@@ -1,13 +1,9 @@
-// import { TypeCode } from 'package:pip_services3_commons-node';
-// import { ObjectSchema } from 'package:pip_services3_commons-node';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// export class DummySchema extends ObjectSchema {
-
-//     public constructor() {
-//         super();
-//         this.withOptionalProperty("id", TypeCode.String);
-//         this.withRequiredProperty("key", TypeCode.String);
-//         this.withOptionalProperty("content", TypeCode.String);
-//     }
-
-// }
+class DummySchema extends ObjectSchema {
+  DummySchema() : super() {
+    withOptionalProperty('id', TypeCode.String);
+    withRequiredProperty('key', TypeCode.String);
+    withOptionalProperty('content', TypeCode.String);
+  }
+}

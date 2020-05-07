@@ -1,94 +1,89 @@
-// import { Descriptor } from 'package:pip_services3_commons-node';
-// import { FilterParams } from 'package:pip_services3_commons-node';
-// import { PagingParams } from 'package:pip_services3_commons-node';
-// import { DataPage } from 'package:pip_services3_commons-node';
-// import { IdGenerator } from 'package:pip_services3_commons-node';
-// import { ICommandable } from 'package:pip_services3_commons-node';
-// import { CommandSet } from 'package:pip_services3_commons-node';
+import 'dart:async';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import './IDummyController.dart';
+import './DummyCommandSet.dart';
+import './Dummy.dart';
 
-// import { IDummyController } from './IDummyController';
-// import { DummyCommandSet } from './DummyCommandSet';
-// import { Dummy } from './Dummy';
+class DummyController implements IDummyController, ICommandable {
+  DummyCommandSet _commandSet;
+  final _entities = <Dummy>[];
 
-// export class DummyController implements IDummyController, ICommandable {
-// 	private _commandSet: DummyCommandSet;
-//     private readonly _entities: Dummy[] = [];
+  @override
+  CommandSet getCommandSet() {
+    _commandSet ??= DummyCommandSet(this);
+    return _commandSet;
+  }
 
-// 	public getCommandSet(): CommandSet {
-// 		if (this._commandSet == null)
-// 			this._commandSet = new DummyCommandSet(this);
-// 		return this._commandSet;
-// 	}
+  @override
+  Future<DataPage<Dummy>> getPageByFilter(
+      String correlationId, FilterParams filter, PagingParams paging) async {
+    filter ??= FilterParams();
+    var key = filter.getAsNullableString('key');
 
-// 	public getPageByFilter(String correlationId, filter: FilterParams, paging: PagingParams, 
-// 		callback: (err: any, result: DataPage<Dummy>) => void): void {
-		
-// 		filter = filter != null ? filter : new FilterParams();
-// 		let key: string = filter.getAsNullableString("key");
-		
-// 		paging = paging != null ? paging : new PagingParams();
-// 		let skip: number = paging.getSkip(0);
-// 		let take: number = paging.getTake(100);
-		
-// 		let result: Dummy[] = [];
-// 		for (var i = 0; i < this._entities.length; i++) {
-//             let entity: Dummy = this._entities[i];
-// 			if (key != null && key != entity.key)
-// 				continue;
-				
-// 			skip--;
-// 			if (skip >= 0) continue; 
-				
-// 			take--;
-// 			if (take < 0) break;
-				
-// 			result.push(entity);
-// 		}
+    paging ??= PagingParams();
+    var skip = paging.getSkip(0);
+    var take = paging.getTake(100);
 
-// 		callback(null,  new DataPage<Dummy>(result));
-// 	}
+    var result = <Dummy>[];
+    for (var i = 0; i < _entities.length; i++) {
+      var entity = _entities[i];
+      if (key != null && key != entity.key) {
+        continue;
+      }
 
-// 	public getOneById(String correlationId, id: string, callback: (err: any, result: Dummy) => void): void {
-// 		for (var i = 0; i < this._entities.length; i++) {
-//             let entity: Dummy = this._entities[i];
-// 			if (id == entity.id) {
-// 				callback(null, entity);
-// 				return;
-// 			}
-// 		}
-// 		callback(null, null);
-// 	}
+      skip--;
+      if (skip >= 0) continue;
 
-// 	public create(String correlationId, entity: Dummy, callback: (err: any, result: Dummy) => void): void {
-// 		if (entity.id == null) {
-//             entity.id = IdGenerator.nextLong();
-//             this._entities.push(entity);
-//         }
-// 		callback(null, entity);
-// 	}
+      take--;
+      if (take < 0) break;
 
-// 	public update(String correlationId, newEntity: Dummy, callback: (err: any, result: Dummy) => void): void {
-// 		for(var index = 0; index < this._entities.length; index++) {
-// 			let entity: Dummy = this._entities[index];
-// 			if (entity.id == newEntity.id) {
-// 				this._entities[index] = newEntity;
-// 				callback(null, newEntity);
-// 				return;
-// 			}
-// 		}
-// 		callback(null, null);
-// 	}
+      result.add(entity);
+    }
 
-// 	public deleteById(String correlationId, id: string, callback: (err: any, result: Dummy) => void): void {
-// 		for (var index = 0; index < this._entities.length; index++) {
-// 			let entity: Dummy = this._entities[index];
-// 			if (entity.id == id) {
-// 				this._entities.splice(index, 1);
-// 				callback(null, entity);
-// 				return;
-// 			}
-// 		}
-// 		callback(null, null);
-// 	}
+    return DataPage<Dummy>(result, result.length);
+  }
 
-// }
+  @override
+  Future<Dummy> getOneById(String correlationId, String id) async {
+    for (var i = 0; i < _entities.length; i++) {
+      var entity = _entities[i];
+      if (id == entity.id) {
+        return entity;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<Dummy> create(String correlationId, Dummy entity) async {
+    if (entity.id == null) {
+      entity.id = IdGenerator.nextLong();
+      _entities.add(entity);
+    }
+    return entity;
+  }
+
+  @override
+  Future<Dummy> update(String correlationId, Dummy newEntity) async {
+    for (var index = 0; index < _entities.length; index++) {
+      var entity = _entities[index];
+      if (entity.id == newEntity.id) {
+        _entities[index] = newEntity;
+        return newEntity;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<Dummy> deleteById(String correlationId, String id) async {
+    for (var index = 0; index < _entities.length; index++) {
+      var entity = _entities[index];
+      if (entity.id == id) {
+        _entities.removeAt(index);
+        return entity;
+      }
+    }
+    return null;
+  }
+}
