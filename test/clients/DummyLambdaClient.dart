@@ -1,86 +1,63 @@
-// import { FilterParams } from 'package:pip_services3_commons-node';
-// import { PagingParams } from 'package:pip_services3_commons-node';
-// import { DataPage } from 'package:pip_services3_commons-node';
+import 'dart:async';
+import 'dart:convert';
 
-// import { LambdaClient } from '../../src/clients/LambdaClient';
-// import { IDummyClient } from '../IDummyClient';
-// import { Dummy } from '../Dummy';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// export class DummyLambdaClient extends LambdaClient implements IDummyClient {
+import 'package:pip_services3_aws/pip_services3_aws.dart';
+import '../IDummyClient.dart';
+import '../Dummy.dart';
 
-//     public constructor() { 
-//         super();
-//     }
+class DummyLambdaClient extends LambdaClient implements IDummyClient {
+  DummyLambdaClient() : super();
 
-//     public getDummies(String correlationId, filter: FilterParams, paging: PagingParams,
-//         callback: (err: any, result: DataPage<Dummy>) => void): void {
-//         this.call(
-//             'get_dummies',
-//             correlationId,
-//             {
-//                 filter: filter,
-//                 paging: paging
-//             },
-//             (err, result) => {
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<DataPage<Dummy>> getDummies(
+      String correlationId, FilterParams filter, PagingParams paging) async {
+    var result = await call(
+        'get_dummies', correlationId, {'filter': filter, 'paging': paging});
+    if (result == null) {
+      return null;
+    }
+    return DataPage<Dummy>.fromJson(json.decode(result), (item) {
+      return Dummy.fromJson(item);
+    });
+  }
 
-//     public getDummyById(String correlationId, dummyId: string,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call(
-//             'get_dummy_by_id',
-//             correlationId,
-//             {
-//                 dummy_id: dummyId
-//             },
-//             (err, result) => {
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<Dummy> getDummyById(String correlationId, String dummyId) async {
+    var result =
+        await call('get_dummy_by_id', correlationId, {'dummy_id': dummyId});
+    if (result == null) {
+      return null;
+    }
+    return Dummy.fromJson(json.decode(result));
+  }
 
-//     public createDummy(String correlationId, dummy: any,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call(
-//             'create_dummy',
-//             correlationId,
-//             {
-//                 dummy: dummy
-//             },
-//             (err, result) => {
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<Dummy> createDummy(String correlationId, Dummy dummy) async {
+    var result = await call('create_dummy', correlationId, {dummy: dummy});
+    if (result == null) {
+      return null;
+    }
+    return Dummy.fromJson(json.decode(result));
+  }
 
-//     public updateDummy(String correlationId, dummy: any,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call(
-//             'update_dummy',
-//             correlationId,
-//             {
-//                 dummy: dummy
-//             },
-//             (err, result) => {
-//                 callback(err, result);
-//             }
-//         );
-//     }
+  @override
+  Future<Dummy> updateDummy(String correlationId, Dummy dummy) async {
+    var result = await call('update_dummy', correlationId, {'dummy': dummy});
+    if (result == null) {
+      return null;
+    }
+    return Dummy.fromJson(json.decode(result));
+  }
 
-//     public deleteDummy(String correlationId, dummyId: string,
-//         callback: (err: any, result: Dummy) => void): void {
-//         this.call(
-//             'delete_dummy',
-//             correlationId,
-//             {
-//                 dummy_id: dummyId
-//             },
-//             (err, result) => {
-//                 callback(err, result);
-//             }
-//         );
-//     }
-
-// }
+  @override
+  Future<Dummy> deleteDummy(String correlationId, String dummyId) async {
+    var result =
+        await call('delete_dummy', correlationId, {'dummy_id': dummyId});
+    if (result == null) {
+      return null;
+    }
+    return Dummy.fromJson(json.decode(result));
+  }
+}

@@ -1,108 +1,78 @@
-// let _ = require('lodash');
+import 'dart:async';
 
-// import { Descriptor } from 'package:pip_services3_commons-node';
-// import { FilterParams } from 'package:pip_services3_commons-node';
-// import { PagingParams} from 'package:pip_services3_commons-node';
-// import { IReferences } from 'package:pip_services3_commons-node';
-// import { ObjectSchema } from 'package:pip_services3_commons-node';
-// import { Schema} from 'package:pip_services3_commons-node';
-// import { MapSchema } from 'package:pip_services3_commons-node';
-// import { TypeCode } from 'package:pip_services3_commons-node';
-// import { FilterParamsSchema } from 'package:pip_services3_commons-node';
-// import { PagingParamsSchema } from 'package:pip_services3_commons-node';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
 
-// import { LambdaFunction } from '../../src/container/LambdaFunction';
-// import { IDummyController } from '../IDummyController';
-// import { DummyFactory } from '../DummyFactory';
-// import { DummySchema } from '../DummySchema';
+import 'package:pip_services3_aws/pip_services3_aws.dart';
+import '../IDummyController.dart';
+import '../DummyFactory.dart';
+import '../DummySchema.dart';
 
-// export class DummyLambdaFunction extends LambdaFunction {
-//     private _controller: IDummyController;
+class DummyLambdaFunction extends LambdaFunction {
+  IDummyController _controller;
 
-//     public constructor() {
-//         super("dummy", "Dummy lambda function");
-//         this._dependencyResolver.put('controller', new Descriptor('pip-services-dummies', 'controller', 'default', '*', '*'));
-//         this._factories.add(new DummyFactory());
-//     }
+  DummyLambdaFunction() : super('dummy', 'Dummy lambda function') {
+    dependencyResolver.put('controller',
+        Descriptor('pip-services-dummies', 'controller', 'default', '*', '*'));
+    factories.add(DummyFactory());
+  }
 
-//     public setReferences(references: IReferences): void {
-//         super.setReferences(references);
-//         this._controller = this._dependencyResolver.getOneRequired<IDummyController>('controller');
-//     }
+  @override
+  void setReferences(IReferences references) {
+    super.setReferences(references);
+    _controller =
+        dependencyResolver.getOneRequired<IDummyController>('controller');
+  }
 
-//     private getPageByFilter(params: any, callback: (err: any, result?: any) => void): void {
-//         this._controller.getPageByFilter(
-//             params.correlation_id,
-//             new FilterParams(params.filter),
-//             new PagingParams(params.paging),
-//             callback
-//         );
-//     }
+  Future _getPageByFilter(params) async{
+    return await _controller.getPageByFilter(params['correlation_id'],
+        FilterParams(params['filter']), PagingParams(params['paging']));
+  }
 
-//     private getOneById(params: any, callback: (err: any, result?: any) => void): void {
-//         this._controller.getOneById(
-//             params.correlation_id,
-//             params.dummy_id,
-//             callback
-//         );
-//     }
+  Future _getOneById(params) async{
+    return await _controller.getOneById(params['correlation_id'], params['dummy_id']);
+  }
 
-//     private create(params: any, callback: (err: any, result?: any) => void): void {
-//         this._controller.create(
-//             params.correlation_id,
-//             params.dummy,
-//             callback
-//         );
-//     }
+  Future _create(params)  async{
+    return await _controller.create(params['correlation_id'], params['dummy']);
+  }
 
-//     private update(params: any, callback: (err: any, result?: any) => void): void {
-//         this._controller.update(
-//             params.correlation_id,
-//             params.dummy,
-//             callback
-//         );
-//     }
+  Future _update(params)  async{
+    return await _controller.update(params['correlation_id'], params['dummy']);
+  }
 
-//     private deleteById(params: any, callback: (err: any, result?: any) => void): void {
-//         this._controller.deleteById(
-//             params.correlation_id,
-//             params.dummy_id,
-//             callback
-//         );
-//     }
+  Future _deleteById(params)  async{
+    return await _controller.deleteById(params['correlation_id'], params['dummy_id']);
+  }
 
-//     protected register() {
-//         this.registerAction(
-//             'get_dummies',
-//             new ObjectSchema(true)
-//                 .withOptionalProperty("filter", new FilterParamsSchema())
-//                 .withOptionalProperty("paging", new PagingParamsSchema())
-//             , this.getPageByFilter);
+  @override
+  void register() {
+    registerAction(
+        'get_dummies',
+        ObjectSchema(true)
+            .withOptionalProperty('filter', FilterParamsSchema())
+            .withOptionalProperty('paging', PagingParamsSchema()),
+        _getPageByFilter);
 
-//         this.registerAction(
-//             'get_dummy_by_id',
-//             new ObjectSchema(true)
-//                 .withOptionalProperty("dummy_id", TypeCode.String)
-//             , this.getOneById);
+    registerAction(
+        'get_dummy_by_id',
+        ObjectSchema(true).withOptionalProperty('dummy_id', TypeCode.String),
+        _getOneById);
 
-//         this.registerAction(
-//             'create_dummy',
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema())
-//             , this.create);
+    registerAction(
+        'create_dummy',
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema()),
+        _create);
 
-//         this.registerAction(
-//             'update_dummy',
-//             new ObjectSchema(true)
-//                 .withRequiredProperty("dummy", new DummySchema())
-//             , this.update);
+    registerAction(
+        'update_dummy',
+        ObjectSchema(true).withRequiredProperty('dummy', DummySchema()),
+        _update);
 
-//         this.registerAction(
-//             'delete_dummy',
-//             new ObjectSchema(true)
-//                 .withOptionalProperty("dummy_id", TypeCode.String)
-//             , this.deleteById);
-//     }
-// }
+    registerAction(
+        'delete_dummy',
+        ObjectSchema(true).withOptionalProperty('dummy_id', TypeCode.String),
+        _deleteById);
+  }
+}
 
-// export const handler = new DummyLambdaFunction().getHandler();
+//export const handler = DummyLambdaFunction().getHandler();

@@ -1,13 +1,15 @@
-// import { Descriptor } from 'package:pip_services3_commons-node';
-// import { CommandableLambdaFunction } from '../../src/container/CommandableLambdaFunction';
-// import { DummyFactory } from '../DummyFactory';
+import 'package:pip_services3_commons/pip_services3_commons.dart';
+import 'package:pip_services3_aws/pip_services3_aws.dart';
+import '../DummyFactory.dart';
 
-// export class DummyCommandableLambdaFunction extends CommandableLambdaFunction {
-//     public constructor() {
-//         super("dummy", "Dummy lambda function");
-//         this._dependencyResolver.put('controller', new Descriptor('pip-services-dummies', 'controller', 'default', '*', '*'));
-//         this._factories.add(new DummyFactory());
-//     }
-// }
+class DummyCommandableLambdaFunction extends CommandableLambdaFunction {
+  DummyCommandableLambdaFunction() : super('dummy', 'Dummy lambda function') {
+    dependencyResolver.put(
+        'controller',
+         Descriptor(
+            'pip-services-dummies', 'controller', 'default', '*', '*'));
+    factories.add( DummyFactory());
+  }
+}
 
-// export const handler = new DummyCommandableLambdaFunction().getHandler();
+//export const handler = new DummyCommandableLambdaFunction().getHandler();

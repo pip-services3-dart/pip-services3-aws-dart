@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart' as aws;
 import 'package:aws_lambda_dart_runtime/runtime/context.dart' as awsctx;
@@ -199,7 +200,7 @@ abstract class LambdaFunction extends Container {
     Future actionCurl(dynamic params) async {
       // Perform validation
       if (schema != null) {
-        var correlationId = params.correlaton_id;
+        var correlationId = params['correlaton_id'];
         var err =
             schema.validateAndReturnException(correlationId, params, false);
         if (err != null) {
@@ -214,9 +215,9 @@ abstract class LambdaFunction extends Container {
     actions[cmd] = actionCurl;
   }
 
-  Future<aws.InvocationResult> _execute(event, awsctx.Context context) async {
-    String cmd = event.cmd;
-    var correlationId = event.correlation_id;
+  dynamic _execute(event, awsctx.Context context) async {
+    String cmd = event['cmd'];
+    var correlationId = event['correlation_id'];
 
     if (cmd == null) {
       throw BadRequestException(
@@ -231,23 +232,25 @@ abstract class LambdaFunction extends Container {
     }
 
     return await action(event);
-    
   }
 
-  Future<aws.InvocationResult> _handler<T>(awsctx.Context context, T event) async {
+  Future<aws.InvocationResult> _handler<T>(
+      awsctx.Context context, T event) async {
+    var result;
     // If already started then execute
     if (isOpen()) {
-      await _execute(event, context);
+      result = await _execute(event, context);
     }
     // Start before execute
     else {
       try {
         await run();
-        return await _execute(event, context);
+        result = await _execute(event, context);
       } catch (err) {
-        return aws.InvocationResult(context.requestId, err.toString());
+        result = ApplicationException().wrap(err);
       }
     }
+    return aws.InvocationResult(context.requestId, json.encode(result));
   }
 
   /// Gets entry point into this lambda function.
@@ -272,7 +275,9 @@ abstract class LambdaFunction extends Container {
   ///  -  Return  Future that receives action result
   /// Throws error.
   Future act(params) async {
-    var context = awsctx.Context();
-    await getHandler()(context, params);
+    var context =
+        awsctx.Context(requestId: IdGenerator.nextLong(), handler: '');
+    var result = await getHandler()(context, params);
+    return result.body;
   }
 }

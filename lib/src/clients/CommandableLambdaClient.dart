@@ -1,97 +1,96 @@
-//  @module clients 
-// import { LambdaClient } from './LambdaClient';
+import 'dart:async';
 
-// 
-// /// Abstract client that calls commandable AWS Lambda Functions.
-// /// 
-// /// Commandable services are generated automatically for [[https://rawgit.com/pip-services-node/package:pip_services3_commons-node/master/doc/api/interfaces/commands.icommandable.html ICommandable objects]].
-// /// Each command is exposed as action determined by "cmd" parameter.
-// /// 
-// /// ### Configuration parameters ###
-// /// 
-// /// - connections:                   
-// ///     - discovery_key:               (optional) a key to retrieve the connection from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]]
-// ///     - region:                      (optional) AWS region
-// /// - credentials:    
-// ///     - store_key:                   (optional) a key to retrieve the credentials from [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/auth.icredentialstore.html ICredentialStore]]
-// ///     - access_id:                   AWS access/client id
-// ///     - access_key:                  AWS access/client id
-// /// - options:
-// ///     - connect_timeout:             (optional) connection timeout in milliseconds (default: 10 sec)
-// ///  
-// /// ### References ###
-// /// 
-// /// - *:logger:\*:\*:1.0            (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/log.ilogger.html ILogger]] components to pass log messages
-// /// - *:counters:\*:\*:1.0          (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/count.icounters.html ICounters]] components to pass collected measurements
-// /// - *:discovery:\*:\*:1.0         (optional) [[https://rawgit.com/pip-services-node/package:pip_services3_components-node/master/doc/api/interfaces/connect.idiscovery.html IDiscovery]] services to resolve connection
-// /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
-// /// 
-// /// See [[LambdaFunction]]
-// /// 
-// /// ### Example ###
-// /// 
-// ///     class MyLambdaClient extends CommandableLambdaClient implements IMyClient {
-// ///         ...
-// ///      
-// ///         public getData(String correlationId, id: string, 
-// ///             callback: (err: any, result: MyData) => void): void {
-// ///             
-// ///             this.callCommand(
-// ///                 "get_data",
-// ///                 correlationId,
-// ///                 { id: id },
-// ///                 (err, result) => {
-// ///                     callback(err, result);
-// ///                 }
-// ///             );        
-// ///         }
-// ///         ...
-// ///     }
-// /// 
-// ///     let client = new MyLambdaClient();
-// ///     client.configure(ConfigParams.fromTuples(
-// ///         "connection.region", "us-east-1",
-// ///         "connection.access_id", "XXXXXXXXXXX",
-// ///         "connection.access_key", "XXXXXXXXXXX",
-// ///         "connection.arn", "YYYYYYYYYYYYY"
-// ///     ));
-// ///     
-// ///     client.getData("123", "1", (err, result) => {
-// ///         ...
-// ///     });
-//  
-// export class CommandableLambdaClient extends LambdaClient {
-//     private _name: string;
+import './LambdaClient.dart';
 
-//     
-//     /// Creates a new instance of this client.
-//     /// 
-//     ///  -  name a service name.
-//      
-//     public constructor(name: string) {
-//         super();
-//         this._name = name;
-//     }
+/// Abstract client that calls commandable AWS Lambda Functions.
+///
+/// Commandable services are generated automatically for [ICommandable].
+/// Each command is exposed as action determined by "cmd" parameter.
+///
+/// ### Configuration parameters ###
+///
+/// - connections:
+///     - discovery_key:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - region:                      (optional) AWS region
+/// - credentials:
+///     - store_key:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - access_id:                   AWS access/client id
+///     - access_key:                  AWS access/client id
+/// - options:
+///     - connect_timeout:             (optional) connection timeout in milliseconds (default: 10 sec)
+///
+/// ### References ###
+///
+/// - *:logger:\*:\*:1.0            (optional) [ILogger] components to pass log messages
+/// - *:counters:\*:\*:1.0          (optional) [ICounters]] components to pass collected measurements
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connection
+/// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
+///
+/// See [LambdaFunction]
+///
+/// ### Example ###
+///
+///     class MyLambdaClient extends CommandableLambdaClient implements IMyClient {
+///         ...
+///
+///         public getData(String correlationId, id: string,
+///             callback: (err: any, result: MyData) => void): void {
+///
+///             this.callCommand(
+///                 "get_data",
+///                 correlationId,
+///                 { id: id },
+///                 (err, result) => {
+///                     callback(err, result);
+///                 }
+///             );
+///         }
+///         ...
+///     }
+///
+///     var client = new MyLambdaClient();
+///     client.configure(ConfigParams.fromTuples(
+///         "connection.region", "us-east-1",
+///         "connection.access_id", "XXXXXXXXXXX",
+///         "connection.access_key", "XXXXXXXXXXX",
+///         "connection.arn", "YYYYYYYYYYYYY"
+///     ));
+///
+///     client.getData("123", "1", (err, result) => {
+///         ...
+///     });
 
-//     
-//     /// Calls a remote action in AWS Lambda function.
-//     /// The name of the action is added as "cmd" parameter
-//     /// to the action parameters. 
-//     /// 
-//     ///  -  cmd               an action name
-//     ///  -  correlationId     (optional) transaction id to trace execution through call chain.
-//     ///  -  params            command parameters.
-//     ///  -  callback          callback function that receives result or error.
-//      
-//     public callCommand(cmd: string, String correlationId, params: any,
-//         callback: (err: any, result: any) => void): void {
-        
-//         let timing = this.instrument(correlationId, this._name + '.' + cmd);
+class CommandableLambdaClient extends LambdaClient {
+  String _name;
 
-//         this.call(cmd, correlationId, params, (err, result) => {
-//             timing.endTiming();
+  /// Creates a new instance of this client.
+  ///
+  ///  -  name a service name.
 
-//             if (callback) callback(err, result);
-//         });
-//     }
-// }
+  CommandableLambdaClient(String name) : super() {
+    _name = name;
+  }
+
+  /// Calls a remote action in AWS Lambda function.
+  /// The name of the action is added as "cmd" parameter
+  /// to the action parameters.
+  ///
+  ///  -  [cmd]               an action name
+  ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
+  ///  -  [params]            command parameters.
+  ///  Return          Future that receives result
+  /// Throws  error.
+
+  Future callCommand(String cmd, String correlationId, params) async {
+    var timing = instrument(correlationId, _name + '.' + cmd);
+    var result;
+    try {
+      result = await call(cmd, correlationId, params);
+    } catch (err) {
+      rethrow;
+    } finally {
+      timing.endTiming();
+    }
+    return result;
+  }
+}

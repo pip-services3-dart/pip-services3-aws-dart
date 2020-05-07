@@ -66,7 +66,7 @@ abstract class CommandableLambdaFunction extends LambdaFunction {
       var command = commands[index];
 
       registerAction(command.getName(), null, (params) async {
-        var correlationId = params.correlation_id;
+        String correlationId = params['correlation_id'] ?? '';
         var args = Parameters.fromValue(params);
         var timing =
             instrument(correlationId, info.name + '.' + command.getName());

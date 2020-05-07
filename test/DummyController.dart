@@ -56,7 +56,7 @@ class DummyController implements IDummyController, ICommandable {
 
   @override
   Future<Dummy> create(String correlationId, Dummy entity) async {
-    if (entity.id == null) {
+    if (entity.id == null || entity.id.isEmpty) {
       entity.id = IdGenerator.nextLong();
       _entities.add(entity);
     }
