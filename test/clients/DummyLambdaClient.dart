@@ -35,7 +35,7 @@ class DummyLambdaClient extends LambdaClient implements IDummyClient {
 
   @override
   Future<Dummy> createDummy(String correlationId, Dummy dummy) async {
-    var result = await call('create_dummy', correlationId, {dummy: dummy});
+    var result = await call('create_dummy', correlationId, {'dummy': dummy});
     if (result == null) {
       return null;
     }

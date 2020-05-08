@@ -234,34 +234,38 @@ abstract class LambdaFunction extends Container {
     return await action(event);
   }
 
-  Future<aws.InvocationResult> _handler<T>(
-      awsctx.Context context, T event) async {
+  Future<aws.InvocationResult> _handler(
+      awsctx.Context context, aws.AwsApiGatewayEvent event) async {
     var result;
     // If already started then execute
     if (isOpen()) {
-      result = await _execute(event, context);
+      result = await _execute(json.decode(event.body), context);
     }
     // Start before execute
     else {
       try {
         await run();
-        result = await _execute(event, context);
+        result = await _execute(json.decode(event.body), context);
       } catch (err) {
         result = ApplicationException().wrap(err);
       }
     }
-    return aws.InvocationResult(context.requestId, json.encode(result));
+    Map<String, dynamic> jsonMap;
+    if (result != null) {
+      jsonMap = result.toJson();
+    }
+    return aws.InvocationResult(context.requestId, aws.AwsApiGatewayResponse.fromJson(jsonMap));
   }
 
   /// Gets entry point into this lambda function.
   ///
   ///  -  [event]     an incoming event object with invocation parameters.
   ///  -  [context]   a context object with local references.
-  aws.Handler<T> getHandler<T>() {
+  aws.Handler<aws.AwsApiGatewayEvent> getHandler() {
     // Return plugin function
-    return (awsctx.Context context, T event) {
+    return (awsctx.Context context, aws.AwsApiGatewayEvent event) {
       // Calling run with changed context
-      return _handler<T>(context, event);
+      return _handler(context, event);
     };
   }
 
@@ -277,7 +281,9 @@ abstract class LambdaFunction extends Container {
   Future act(params) async {
     var context =
         awsctx.Context(requestId: IdGenerator.nextLong(), handler: '');
-    var result = await getHandler()(context, params);
-    return result.body;
+    var event = aws.AwsApiGatewayEvent(body: json.encode(params));
+
+    var result = await getHandler()(context, event);
+    return result.body.body;
   }
 }

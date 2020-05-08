@@ -20,7 +20,7 @@ group('CloudWatchCounters', () {
       return;
     }
 
-    setUp(()  {
+    setUp(()  async {
 
         _counters =  CloudWatchCounters();
         _fixture =  CountersFixture(_counters);
@@ -43,7 +43,7 @@ group('CloudWatchCounters', () {
         ]);
         _counters.setReferences(references);
 
-        _counters.open(null);
+        await _counters.open(null);
     });
 
     tearDown(()  async{

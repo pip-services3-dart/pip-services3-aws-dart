@@ -226,7 +226,7 @@ class CloudWatchCounters extends CachedCounters
     dimensions.add(Dimension(name: 'InstanceID', value: _instance));
 
     var now = DateTime.now();
-    var data = [];
+    var data = <MetricDatum>[];
 
     for (var counter in counters) {
       data.add(_getCounterData(counter, now, dimensions));
@@ -239,7 +239,7 @@ class CloudWatchCounters extends CachedCounters
             _logger.error('cloudwatch_counters', ex, 'putMetricData error');
           }
         }
-        data = [];
+        data = <MetricDatum>[];
       }
     }
 

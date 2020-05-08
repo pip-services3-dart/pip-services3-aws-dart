@@ -1,47 +1,47 @@
-// let assert = require('chai').assert;
+import 'dart:async';
 
-// import { LogLevel } from 'package:pip_services3_components-node';
-// import { CachedLogger } from 'package:pip_services3_components-node';
+import 'package:test/test.dart';
+import 'package:pip_services3_components/pip_services3_components.dart';
 
-// export class LoggerFixture {
-//     private _logger: CachedLogger;
+class LoggerFixture {
+  CachedLogger _logger;
 
-//     public constructor(logger: CachedLogger) {
-//         this._logger = logger;
-//     }
+  LoggerFixture(CachedLogger logger) {
+    _logger = logger;
+  }
 
-//     public testLogLevel() {
-//         assert.isTrue(this._logger.getLevel() >= LogLevel.None);
-//         assert.isTrue(this._logger.getLevel() <= LogLevel.Trace);
-//     }
+  void testLogLevel() {
+    expect(_logger.getLevel().index >= LogLevel.None.index, isTrue);
+    expect(_logger.getLevel().index <= LogLevel.Trace.index, isTrue);
+  }
 
-//     public testSimpleLogging(done) {
-//         this._logger.setLevel(LogLevel.Trace);
+  void testSimpleLogging() async {
+    _logger.setLevel(LogLevel.Trace);
 
-//         this._logger.fatal(null, null, "Fatal error message");
-//         this._logger.error(null, null, "Error message");
-//         this._logger.warn(null, "Warning message");
-//         this._logger.info(null, "Information message");
-//         this._logger.debug(null, "Debug message");
-//         this._logger.trace(null, "Trace message");
+    _logger.fatal(null, null, 'Fatal error message');
+    _logger.error(null, null, 'Error message');
+    _logger.warn(null, 'Warning message');
+    _logger.info(null, 'Information message');
+    _logger.debug(null, 'Debug message');
+    _logger.trace(null, 'Trace message');
 
-//         this._logger.dump();
-//         setTimeout(done, 1000);
-//     }
+    _logger.dump();
+    await Future.delayed(Duration(milliseconds: 1000));
+  }
 
-//     public testErrorLogging(done) {
-//         try {
-//             // Raise an exception
-//             throw new Error();
-//         } catch (ex) {
-//             this._logger.fatal("123", ex, "Fatal error");
-//             this._logger.error("123", ex, "Recoverable error");
+  void testErrorLogging() async {
+    try {
+      // Raise an exception
+      throw Exception('Test exception for AWS CloudWath Log');
+    } catch (ex) {
+      _logger.fatal('123', ex, 'Fatal error');
+      _logger.error('123', ex, 'Recoverable error');
 
-//             assert.isNotNull(ex);
-//         }
+      expect(ex, isNotNull);
+    }
 
-//         this._logger.dump();
-//         setTimeout(done, 1000);
-//     }
-    
-// }
+    _logger.dump();
+
+    await Future.delayed(Duration(milliseconds: 1000));
+  }
+}

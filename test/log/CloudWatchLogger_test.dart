@@ -53,8 +53,8 @@ void main() {
       await _logger.close(null);
     });
 
-    test('Log Level', () async {
-      await _fixture.testLogLevel();
+    test('Log Level', () {
+      _fixture.testLogLevel();
     });
 
     test('Simple Logging', () async {

@@ -77,47 +77,20 @@ class AwsConnectionResolver implements IConfigurable, IReferenceable {
   /// AWSConnectionParams value.
   ///
   ///  -  [correlationId]     (optional) transaction id to trace execution through call chain.
-  ///  Return 			Future that receives AWSConnectionParams value 
+  ///  Return 			Future that receives AWSConnectionParams value
   /// Throws error.
   ///
   /// See [connect.idiscovery.html IDiscovery] (in the Pip.Services components package)
   Future<AwsConnectionParams> resolve(String correlationId) async {
     var connection = AwsConnectionParams();
-    CredentialParams credential;
-    var err = await Future.wait([
-      () async {
-        try {
-          var data = await connectionResolver.resolve(correlationId);
-          connection.append(data);
-        } catch (ex) {
-          return ex;
-        }
-        return null;
-      }(),
-      () async {
-        try {
-          var data = await credentialResolver.lookup(correlationId);
-          connection.append(data);
-        } catch (ex) {
-          return ex;
-        }
-        return null;
-      }(),
-      () async {
-        // Force ARN parsing
-        connection.setArn(connection.getArn());
-        // Perform validation
-        try {
-          await connection.validate(correlationId);
-        } catch (ex) {
-          return ex;
-        }
-        return null;
-      }()
-    ]);
-    if (err.isNotEmpty) {
-      throw err[0];
-    }
+    //CredentialParams credential;
+    connection.append(await connectionResolver.resolve(correlationId));
+    connection.append(await credentialResolver.lookup(correlationId));
+    // Force ARN parsing
+    connection.setArn(connection.getArn());
+    // Perform validation
+    await connection.validate(correlationId);
+
     return connection;
   }
 }

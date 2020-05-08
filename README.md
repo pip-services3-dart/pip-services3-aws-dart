@@ -15,6 +15,21 @@ Quick Links:
 * [Building and Testing](https://github.com/pip-services3-dart/pip-services3-aws-dart/blob/master/doc/Development.md)
 * [Contributing](https://github.com/pip-services3-dart/pip-services3-aws-dart/blob/master/docs/Development.md#contrib)
 
+
+# Warning!
+
+The service is not finished at the moment. Development progress is as follows:
+- The components of CloudWatchCounters and CloudWatchLogger are tested and working.
+- The components for creating server-side functions for the Lambda service are tested and work, but are not assembled due to the use of dart: mirrors in dart2native. To build in OSs other than Linux, use the docker and the build_lambda.ps1 script.
+- The components for creating a client for Lambda services are not fully tested. Requires full testing on AWS.
+
+
+## Help links
+
+* (https://github.com/awslabs/aws-lambda-dart-runtime)
+* (https://github.com/agilord/aws_client)
+
+
 ## Acknowledgements
 
 The Dart version of Pip.Services is created and maintained by:

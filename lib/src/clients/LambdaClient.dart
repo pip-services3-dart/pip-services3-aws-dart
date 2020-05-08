@@ -148,36 +148,26 @@ abstract class LambdaClient
       return;
     }
 
-    var err = await Future.wait([
-      () async {
-        connection = await connectionResolver.resolve(correlationId);
-      }(),
-      () async {
-        //final Client httpClient = ConsoleClient(idleTimeout: Duration(milliseconds: _connectTimeout));
-        _httpClient = ConsoleClient();
-        final credentials = Credentials(
-            accessKey: connection.getAccessId(),
-            secretKey: connection.getAccessKey());
-        //
-        try {
-          _aws = Aws(credentials: credentials, httpClient: _httpClient);
-          lambda = _aws.lambda(connection.getRegion());
+    connection = await connectionResolver.resolve(correlationId);
 
-          opened = true;
-          logger.debug(correlationId, 'Lambda client connected to %s',
-              [connection.getArn()]);
-        } catch (ex) {
-          logger.error(correlationId, ex, 'Error while open AWS client');
-          return ex;
-        } finally {
-          await _httpClient.close();
-        }
-      }()
-    ]);
+    //final Client httpClient = ConsoleClient(idleTimeout: Duration(milliseconds: _connectTimeout));
+    _httpClient = ConsoleClient();
+    final credentials = Credentials(
+        accessKey: connection.getAccessId(),
+        secretKey: connection.getAccessKey());
+    //
+    try {
+      _aws = Aws(credentials: credentials, httpClient: _httpClient);
+      lambda = _aws.lambda(connection.getRegion());
 
-    if (err.isNotEmpty) {
-      throw err[0];
-    }
+      opened = true;
+      logger.debug(correlationId, 'Lambda client connected to %s',
+          [connection.getArn()]);
+    } catch (ex) {
+      logger.error(correlationId, ex, 'Error while open AWS client');
+      await _httpClient.close();
+      return ex;
+    } 
   }
 
   /// Closes component and frees used resources.
@@ -194,10 +184,10 @@ abstract class LambdaClient
 
   /// Performs AWS Lambda Function invocation.
   ///
-  ///  -  invocationType    an invocation type: 'RequestResponse' or 'Event'
-  ///  -  cmd               an action name to be called.
-  ///  -  correlationId 	(optional) transaction id to trace execution through call chain.
-  ///  -  args              action arguments
+  ///  -  [invocationType]    an invocation type: 'RequestResponse' or 'Event'
+  ///  -  [cmd]               an action name to be called.
+  ///  -  [correlationId] 	(optional) transaction id to trace execution through call chain.
+  ///  -  [args]              action arguments
   ///  Return          Future that receives action result
   /// Throws error.
 
@@ -217,7 +207,7 @@ abstract class LambdaClient
     var headers = {'X-Amz-Log-Type': 'None'};
 
     try {
-      var data = await lambda.invoke(connection.getArn(), cloneArgs.toString(),
+      var data = await lambda.invoke(connection.getArn(), json.encode(cloneArgs),
           headers: headers, invocationType: invocationType);
 
       var result = await data.readAsString(); //readAsBytes();

@@ -133,7 +133,7 @@ class AwsConnectionParams extends ConfigParams {
   /// Returns the AWS resource ARN.
   String getArn() {
     var arn = super.getAsNullableString('arn');
-    if (arn != null) return arn;
+    if (arn != null && arn.isNotEmpty) return arn;
 
     arn = 'arn';
     var partition = getPartition() ?? 'aws';
@@ -160,7 +160,7 @@ class AwsConnectionParams extends ConfigParams {
   void setArn(String value) {
     super.put('arn', value);
 
-    if (value != null) {
+    if (value != null && value.isNotEmpty) {
       var tokens = value.split(':');
       setPartition(tokens[1]);
       setService(tokens[2]);

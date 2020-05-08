@@ -6,3 +6,4 @@
 /.packages
 /.dart_tool
 /temp
+*.local.ps1

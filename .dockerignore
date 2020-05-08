@@ -4,7 +4,6 @@
 /.dockerignore
 /doc
 /docker
-/*.sh
 /*.ps1
 /*.md
 /example

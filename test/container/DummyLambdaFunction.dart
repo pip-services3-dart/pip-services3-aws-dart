@@ -6,6 +6,7 @@ import 'package:pip_services3_aws/pip_services3_aws.dart';
 import '../IDummyController.dart';
 import '../DummyFactory.dart';
 import '../DummySchema.dart';
+import '../Dummy.dart';
 
 class DummyLambdaFunction extends LambdaFunction {
   IDummyController _controller;
@@ -23,25 +24,29 @@ class DummyLambdaFunction extends LambdaFunction {
         dependencyResolver.getOneRequired<IDummyController>('controller');
   }
 
-  Future _getPageByFilter(params) async{
+  Future _getPageByFilter(params) async {
     return await _controller.getPageByFilter(params['correlation_id'],
         FilterParams(params['filter']), PagingParams(params['paging']));
   }
 
-  Future _getOneById(params) async{
-    return await _controller.getOneById(params['correlation_id'], params['dummy_id']);
+  Future _getOneById(params) async {
+    return await _controller.getOneById(
+        params['correlation_id'], params['dummy_id']);
   }
 
-  Future _create(params)  async{
-    return await _controller.create(params['correlation_id'], params['dummy']);
+  Future _create(params) async {
+    return await _controller.create(
+        params['correlation_id'], Dummy.fromJson(params['dummy']));
   }
 
-  Future _update(params)  async{
-    return await _controller.update(params['correlation_id'], params['dummy']);
+  Future _update(params) async {
+    return await _controller.update(
+        params['correlation_id'], Dummy.fromJson(params['dummy']));
   }
 
-  Future _deleteById(params)  async{
-    return await _controller.deleteById(params['correlation_id'], params['dummy_id']);
+  Future _deleteById(params) async {
+    return await _controller.deleteById(
+        params['correlation_id'], params['dummy_id']);
   }
 
   @override
