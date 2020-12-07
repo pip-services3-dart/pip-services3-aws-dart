@@ -9,16 +9,15 @@ import 'package:pip_services3_commons/pip_services3_commons.dart';
 import '../connect/AwsConnectionParams.dart';
 import '../connect/AwsConnectionResolver.dart';
 
-
 /// Performance counters that periodically dumps counters to AWS Cloud Watch Metrics.
 ///
 /// ### Configuration parameters ###
 ///
 /// - [connections]:
-///     - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery]
+///     - [discovery_key]:         (optional) a key to retrieve the connection from [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html)
 ///     - [region]:                (optional) AWS region
 /// - [credentials]:
-///     - [store_key]:             (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [store_key]:             (optional) a key to retrieve the credentials from [ICredentialStore](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICredentialStore-class.html)
 ///     - [access_id]:             AWS access/client id
 ///     - [access_key]:            AWS access/client id
 /// - [options]:
@@ -27,13 +26,13 @@ import '../connect/AwsConnectionResolver.dart';
 ///
 /// ### References ###
 ///
-/// - *:context-info:\*:\*:1.0      (optional) [ContextInfo] to detect the context id and specify counters source
-/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connections
+/// - *:context-info:\*:\*:1.0      (optional) [ContextInfo](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ContextInfo-class.html) to detect the context id and specify counters source
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connections
 /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 ///
-/// See [Counter] (in the Pip.Services components package)
-/// See [CachedCounters] (in the Pip.Services components package)
-/// See [CompositeLogger] (in the Pip.Services components package)
+/// See [Counter](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/Counter-class.html) (in the Pip.Services components package)
+/// See [CachedCounters](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/CachedCounters-class.html) (in the Pip.Services components package)
+/// See [CompositeLogger](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/CompositeLogger-class.html) (in the Pip.Services components package)
 ///
 /// ### Example ###
 ///
@@ -95,7 +94,7 @@ class CloudWatchCounters extends CachedCounters
   /// Sets references to dependent components.
   ///
   ///  -  references 	references to locate the component dependencies.
-  /// See [IReferences] (in the Pip.Services commons package)
+  /// See [IReferences](https://pub.dev/documentation/pip_services3_commons/latest/pip_services3_commons/IReferences-class.html) (in the Pip.Services commons package)
   @override
   void setReferences(IReferences references) {
     _logger.setReferences(references);

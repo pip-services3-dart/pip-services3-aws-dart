@@ -20,10 +20,10 @@ import '../connect/AwsConnectionResolver.dart';
 /// ### Configuration parameters ###
 ///
 /// - [connections]:
-///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html)
 ///     - [region]:                      (optional) AWS region
 /// - [credentials]:
-///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICredentialStore-class.html)
 ///     - [access_id]:                   AWS access/client id
 ///     - [access_key]:                  AWS access/client id
 /// - [options]:
@@ -31,9 +31,9 @@ import '../connect/AwsConnectionResolver.dart';
 ///
 /// ### References ###
 ///
-/// - *:logger:\*:\*:1.0            (optional) [ILogger] components to pass log messages
-/// - *:counters:\*:\*:1.0          (optional) [ICounters] components to pass collected measurements
-/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connection
+/// - *:logger:\*:\*:1.0            (optional) [ILogger](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ILogger-class.html) components to pass log messages
+/// - *:counters:\*:\*:1.0          (optional) [ICounters](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICounters-class.html) components to pass collected measurements
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connection
 /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 ///
 /// See [LambdaFunction]
@@ -167,7 +167,7 @@ abstract class LambdaClient
       logger.error(correlationId, ex, 'Error while open AWS client');
       await _httpClient.close();
       return ex;
-    } 
+    }
   }
 
   /// Closes component and frees used resources.
@@ -207,7 +207,8 @@ abstract class LambdaClient
     var headers = {'X-Amz-Log-Type': 'None'};
 
     try {
-      var data = await lambda.invoke(connection.getArn(), json.encode(cloneArgs),
+      var data = await lambda.invoke(
+          connection.getArn(), json.encode(cloneArgs),
           headers: headers, invocationType: invocationType);
 
       var result = await data.readAsString(); //readAsBytes();

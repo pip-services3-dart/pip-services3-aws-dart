@@ -16,7 +16,7 @@ import 'package:pip_services3_components/pip_services3_components.dart';
 /// - [client_key]:    alternative to access_key
 /// - [secret_key]:    alternative to access_key
 ///
-/// In addition to standard parameters [CredentialParams] may contain any number of custom parameters
+/// In addition to standard parameters [CredentialParams](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/CredentialParams-class.html) may contain any number of custom parameters
 ///
 /// See [AwsConnectionResolver]
 ///
@@ -252,7 +252,7 @@ class AwsConnectionParams extends ConfigParams {
   ///  -  [config] 	configuration parameters
   /// Returns			the generated AwsConnectionParams object.
   ///
-  /// See [[mergeConfigs]]
+  /// See [mergeConfigs]
   static AwsConnectionParams fromConfig(ConfigParams config) {
     var result = AwsConnectionParams();
 
@@ -275,7 +275,7 @@ class AwsConnectionParams extends ConfigParams {
   ///  -  [configs] 	a list with configuration parameters
   /// Returns			the generated AwsConnectionParams object.
   ///
-  /// See [[fromConfig]]
+  /// See [fromConfig]
 
   static AwsConnectionParams mergeConfigs(List<ConfigParams> configs) {
     var config = ConfigParams.mergeConfigs(configs);

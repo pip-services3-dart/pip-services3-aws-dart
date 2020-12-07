@@ -4,31 +4,31 @@ import './LambdaFunction.dart';
 
 /// Abstract AWS Lambda function, that acts as a container to instantiate and run components
 /// and expose them via external entry point. All actions are automatically generated for commands
-/// defined in [ICommandable components]. Each command is exposed as an action defined by "cmd" parameter.
+/// defined in [ICommandable components](https://pub.dev/documentation/pip_services3_commons/latest/pip_services3_commons/ICommandable-class.html). Each command is exposed as an action defined by "cmd" parameter.
 ///
-/// Container configuration for this Lambda function is stored in <code>"./config/config.yml" file.
-/// But this path can be overriden by <code>CONFIG_PATH environment variable.
+/// Container configuration for this Lambda function is stored in <code>"./config/config.yml"</code> file.
+/// But this path can be overriden by <code>CONFIG_PATH</code> environment variable.
 ///
 /// ### Configuration parameters ###
 ///
 /// - [dependencies]:
 ///     - [controller]:                  override for Controller dependency
 /// - [connections]:
-///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html)
 ///     - [region]:                      (optional) AWS region
 /// - [credentials]:
-///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICredentialStore-class.html)
 ///     - [access_id]:                   AWS access/client id
 ///     - [access_key]:                  AWS access/client id
 ///
 /// ### References ###
 ///
-/// - *:logger:\*:\*:1.0            (optional) [ILogger] components to pass log messages
-/// - *:counters:\*:\*:1.0          (optional) [ICounters] components to pass collected measurements
-/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connection
+/// - *:logger:\*:\*:1.0            (optional) [ILogger](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ILogger-class.html) components to pass log messages
+/// - *:counters:\*:\*:1.0          (optional) [ICounters](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICounters-class.html) components to pass collected measurements
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connection
 /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 ///
-/// See [[LambdaClient]]
+/// See [LambdaClient]
 ///
 /// ### Example ###
 ///

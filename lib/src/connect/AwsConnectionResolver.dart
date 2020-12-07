@@ -6,12 +6,12 @@ import 'package:pip_services3_components/pip_services3_components.dart';
 import './AwsConnectionParams.dart';
 
 /// Helper class to retrieve AWS connection and credential parameters,
-/// validate them and compose a [[AwsConnectionParams]] value.
+/// validate them and compose a [AwsConnectionParams] value.
 ///
 /// ### Configuration parameters ###
 ///
 /// - [connections]:
-///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html)
 ///     - [region]:                      (optional) AWS region
 ///     - [partition]:                   (optional) AWS partition
 ///     - [service]:                     (optional) AWS service
@@ -19,17 +19,17 @@ import './AwsConnectionParams.dart';
 ///     - [resource]:                    (optional) AWS resource id
 ///     - [arn]:                         (optional) AWS resource ARN
 /// - [credentials]:
-///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICredentialStore-class.html)
 ///     - [access_id]:                   AWS access/client id
 ///     - [access_key]:                  AWS access/client id
 ///
 /// ### References ###
 ///
-/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery] services to resolve connections
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connections
 /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 ///
-/// See [ConnectionParams] (in the Pip.Services components package)
-/// See [IDiscovery] (in the Pip.Services components package)
+/// See [ConnectionParams](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ConnectionParams-class.html) (in the Pip.Services components package)
+/// See [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) (in the Pip.Services components package)
 ///
 /// ### Example ###
 ///

@@ -15,32 +15,32 @@ import 'package:pip_services3_components/pip_services3_components.dart';
 /// When handling calls 'cmd' parameter determines which what action shall be called, while
 /// other parameters are passed to the action itself.
 ///
-/// Container configuration for this Lambda function is stored in <code>'./config/config.yml' file.
-/// But this path can be overriden by <code>CONFIG_PATH environment variable.
+/// Container configuration for this Lambda function is stored in <code>'./config/config.yml'</code> file.
+/// But this path can be overriden by <code>CONFIG_PATH</code> environment variable.
 ///
 /// ### Configuration parameters ###
 ///
 /// - [dependencies]:
 ///     - [controller]:                  override for Controller dependency
 /// - [connections]:
-///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery]
+///     - [discovery_key]:               (optional) a key to retrieve the connection from [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html)
 ///     - [region]:                      (optional) AWS region
 /// - [credentials]:
-///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore]
+///     - [store_key]:                   (optional) a key to retrieve the credentials from [ICredentialStore](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICredentialStore-class.html)
 ///     - [access_id]:                   AWS access/client id
 ///     - [access_key]:                  AWS access/client id
 ///
 /// ### References ###
 ///
-/// - *:logger:\*:\*:1.0            (optional) [ILogger]] components to pass log messages
-/// - *:counters:\*:\*:1.0          (optional) [ICounters]] components to pass collected measurements
-/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery]] services to resolve connection
+/// - *:logger:\*:\*:1.0            (optional) [ILogger](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ILogger-class.html) components to pass log messages
+/// - *:counters:\*:\*:1.0          (optional) [ICounters](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/ICounters-class.html) components to pass collected measurements
+/// - *:discovery:\*:\*:1.0         (optional) [IDiscovery](https://pub.dev/documentation/pip_services3_components/latest/pip_services3_components/IDiscovery-class.html) services to resolve connection
 /// - *:credential-store:\*:\*:1.0  (optional) Credential stores to resolve credentials
 ///
 /// See [LambdaClient]
 ///
 /// ### Example ###
-///
+///```dart
 ///     class MyLambdaFunction extends LambdaFunction {
 ///         IMyController _controller ;
 ///         ...
@@ -71,6 +71,7 @@ import 'package:pip_services3_components/pip_services3_components.dart';
 ///
 ///     await service.run();
 ///     print('MyLambdaFunction is started');
+/// ```
 
 abstract class LambdaFunction extends Container {
   /// The performanc counters.
@@ -254,7 +255,8 @@ abstract class LambdaFunction extends Container {
     if (result != null) {
       jsonMap = result.toJson();
     }
-    return aws.InvocationResult(context.requestId, aws.AwsApiGatewayResponse.fromJson(jsonMap));
+    return aws.InvocationResult(
+        context.requestId, aws.AwsApiGatewayResponse.fromJson(jsonMap));
   }
 
   /// Gets entry point into this lambda function.

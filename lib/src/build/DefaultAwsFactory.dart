@@ -6,8 +6,8 @@ import '../count/CloudWatchCounters.dart';
 
 /// Creates AWS components by their descriptors.
 ///
-/// See [[CloudWatchLogger]]
-/// See [[CloudWatchCounters]]
+/// See [CloudWatchLogger]
+/// See [CloudWatchCounters]
 class DefaultAwsFactory extends Factory {
   static final descriptor =
       Descriptor('pip-services', 'factory', 'aws', 'default', '1.0');
