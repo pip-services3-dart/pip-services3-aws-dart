@@ -11,9 +11,9 @@ void main() {
     CloudWatchLogger _logger;
     LoggerFixture _fixture;
 
-    var AWS_REGION = Platform.environment['AWS_REGION'] ?? '';
-    var AWS_ACCESS_ID = Platform.environment['AWS_ACCESS_ID'] ?? '';
-    var AWS_ACCESS_KEY = Platform.environment['AWS_ACCESS_KEY'] ?? '';
+    var AWS_REGION = Platform.environment['AWS_REGION'];
+    var AWS_ACCESS_ID = Platform.environment['AWS_ACCESS_ID'];
+    var AWS_ACCESS_KEY = Platform.environment['AWS_ACCESS_KEY'];
 
     if (AWS_REGION == null || AWS_ACCESS_ID == null || AWS_ACCESS_KEY == null) {
       return;
