@@ -1,6 +1,14 @@
 {
     "name": "pip-services3-aws",
-    "registry": "pipdevs",
+    "type": "module",
+    "language": "dart",
     "version": "1.0.0",
-    "build": "0"
+    "build": 0,
+    "registry": "pipdevs",
+    "artifacts": [
+        {
+            "name":  "<name>",
+            "type": "dart"
+        }
+    ]
 }
